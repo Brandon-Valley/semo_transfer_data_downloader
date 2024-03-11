@@ -162,3 +162,4 @@ cython_debug/
 .history/*
 .vscode/*
 page_downloads/*
+ignore/*
