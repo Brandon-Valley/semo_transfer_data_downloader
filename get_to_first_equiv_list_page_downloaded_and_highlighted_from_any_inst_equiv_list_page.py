@@ -146,7 +146,7 @@ def _get_cur_equiv_list_page_position_info(html_file_path):
 # print('Next paging xpath:', next_paging_xpath)
 
 
-def get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page(driver, equiv_page_1_dest_path: Path):
+def get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page(driver: webdriver.Chrome, equiv_page_1_dest_path: Path):
     nav = Equiv_List_Page_Navigator(driver, equiv_page_1_dest_path)
     print(f"{nav.highlighted_page_num=}")
     exit(f"{nav.highlighted_page_num=}")

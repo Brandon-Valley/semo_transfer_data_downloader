@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
 
-from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, read_soup_from_html_file, wait_until_inst_page_loaded
+from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
@@ -146,9 +146,90 @@ class Equiv_List_Page_Navigator():
         # Starts not downloaded
         self.driver = driver
         self.cur_page_html_path = cur_page_html_path
-        self.update_position_info()
-        pass
+        
+        self.update_pagination_info()
 
-    def update_position_info(self):
-        download_current_page_source(self.driver, self.cur_page_html_path)
-        self.highlighted_page_num, self.visible_page_nums, self.previous_paging_xpath, self.next_paging_xpath = _get_page_numbers_and_paging_xpaths(self.cur_page_html_path)
+
+    def update_pagination_info(self):
+        # download_current_page_source(self.driver, self.cur_page_html_path)#TMP
+
+        # Pagination info
+        self.pagination = False
+        self.current_page_num = 1 # current page == highlighted page if pagination
+        self.visible_page_nums = []
+        self.previous_paging_xpath = None
+        self.next_paging_xpath = None
+
+        soup = read_soup_from_html_file(self.cur_page_html_path)
+        pagination_table_row_html = soup.find('tr', class_='pagination-tes')
+        # print("pagination_table_row_html:")
+        # pprint(pagination_table_row_html)
+
+        if not pagination_table_row_html:
+            return
+        
+        self.pagination = True
+
+        # print(type(pagination_table_row_html))
+        # print("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        # tbody = pagination_table_row_html.find('tbody')
+        for td_num, td in enumerate(pagination_table_row_html.find_all('td')):
+            if td_num == 0:
+                continue
+            # print("vvvvvvvvvvvvvvvvvvv td" + str(td_num))
+            # print(f"{td=}")
+
+            try:
+                # print(f"{td['span']=}")
+                self.current_page_num = td['span']
+            except KeyError:
+                pass
+
+            # if 'span' in td.keys():
+            #     self.current_page_num = int(td.text)
+
+            # href = td.find('a')['href']
+            a = td.find('a')
+            # print(f"{a=}")
+            href = None
+            if a:
+                href = a['href']
+            # print(f"{href=}")
+
+            if td.text == "...":
+                if td_num == 1:
+                    self.previous_paging_xpath = href
+                else:
+                    self.next_paging_xpath = href
+                continue
+            
+            self.visible_page_nums.append(int(td.text))
+
+
+
+        # self.highlighted_page_num, self.visible_page_nums, self.previous_paging_xpath, self.next_paging_xpath = _get_page_numbers_and_paging_xpaths(self.cur_page_html_path)
+
+if __name__ == "__main__":
+    import os.path as path
+    print("Running " , path.abspath(__file__) , '...')
+
+
+    HTML_PATH = Path("C:/Users/Brandon/Downloads/tmp.html")
+    HTML_1_PAGE_PATH = Path("C:/p/semo_transfer_data_downloader/page_downloads/institution_page_downloads/equiv_w_1_page_ex.htm")
+    # driver = setup_driver()
+
+    def _test_html_str_path(html_str_path):
+        print(f"Testing {html_str_path}...")
+        nav = Equiv_List_Page_Navigator(None, Path(html_str_path))
+        print("############# RESULTS #############")
+        print(f"{nav.pagination=}")
+        print(f"{nav.current_page_num=}")
+        print(f"{nav.visible_page_nums=}")
+        print(f"{nav.previous_paging_xpath=}")
+        print(f"{nav.next_paging_xpath=}")
+
+    _test_html_str_path("C:/Users/Brandon/Downloads/tmp.html")
+    _test_html_str_path("C:/p/semo_transfer_data_downloader/page_downloads/institution_page_downloads/equiv_w_1_page_ex.htm")
+    _test_html_str_path("C:/p/semo_transfer_data_downloader/page_downloads/institution_page_downloads/equiv_11_pages_ex.html")
+
+    print("End of Main") 

@@ -193,7 +193,7 @@ def download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver,
 
         # Get to known starting position (this also downloads the first equiv list page)
         equiv_page_1_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, 1, equiv_list_dl_dir_path)
-        get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page(equiv_page_1_dest_path)
+        get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page(driver, equiv_page_1_dest_path)
         print("At starting position!")
 
 
