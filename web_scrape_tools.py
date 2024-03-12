@@ -1,6 +1,7 @@
 from pathlib import Path
 import random
 from time import sleep
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -9,6 +10,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
+DOT_DOT_DOT_INST_PAGE_NUMS = [11, 21, 31, 41]
+
+
+def read_soup_from_html_file(html_path: Path) -> BeautifulSoup:
+    with open(html_path, 'r', encoding='utf-8') as f:
+        contents = f.read()
+    return BeautifulSoup(contents, 'html.parser')
 
 def download_current_page_source(driver, dest_path: Path):
     print(f"Downloading current page source to {dest_path=}...")
@@ -20,6 +29,8 @@ def download_current_page_source(driver, dest_path: Path):
     dest_path.parent.mkdir(parents=True, exist_ok=True)
     with open(dest_path, 'w', encoding='utf-8') as file:
         file.write(html_content)
+
+
 
 
 
