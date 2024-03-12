@@ -10,6 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
+from get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page import get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page
 
 from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, read_soup_from_html_file, wait_until_inst_page_loaded
 
@@ -95,7 +96,6 @@ def _download_all_equiv_list_pages_of_inst(driver, inst_id, inst_page_num, equiv
                         break # Found #1 !!
                     except Exception as e:
                         print(f"Here we go again...{str(e)}")
-
             else:
                 try:
                     link = driver.find_element(By.XPATH, f"//a[@href=\"javascript:__doPostBack('gdvCourseEQ','Page${equiv_list_page_num}')\"]")
@@ -140,6 +140,7 @@ def _download_all_equiv_list_pages_of_inst(driver, inst_id, inst_page_num, equiv
     equiv_page_1_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, 1, equiv_list_dl_dir_path)
     _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id)
 
+    # FIXME pick up here!!!!!!!!!!!!!!!!!!!!!!!!!!
     # Handle other equiv list pages if they exist
     print("Checking if there are more equiv list pages that need to be downloaded...")
     num_equiv_list_pages = _get_num_equiv_list_pages_from_first_equiv_list_html_path(equiv_page_1_dest_path)
@@ -185,36 +186,18 @@ def download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver,
             print(f"Skipping all equiv pages of {inst_id=} because they already exist...")
             continue
 
+        # Click the institution link, this could put you on ANY equiv list page for the institution
+        _click_inst_link(driver, inst_id)
+        _wait_until_equiv_page_loaded(driver)
+        sleep(random.randint(1, 3))
+
+        # Get to known starting position (this also downloads the first equiv list page)
+        equiv_page_1_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, 1, equiv_list_dl_dir_path)
+        get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page(equiv_page_1_dest_path)
+        print("At starting position!")
+
+
         _download_all_equiv_list_pages_of_inst(driver, inst_id, inst_page_num, equiv_list_dl_dir_path)
-
-        # # loop through all paginated equiv pages
-        # cur_equiv_page_num = 1
-        # while True:
-        #     cur_equiv_page_dest_path = _get_equiv_page_dest_path(inst_page_dest_path, inst_page_num, inst_id, cur_equiv_page_num)
-
-        #     # Check for skips
-        #     if cur_equiv_page_dest_path.exists():
-        #         # Check if can skip all paginated equiv pages for this institution
-        #         if cur_equiv_page_num == 1:
-        #             _get_num_equiv_list_pages_from_first_equiv_list_html_path
-
-
-        #         print(f"Skipping {cur_equiv_page_dest_path=} because it already exists...")
-        #         continue
-
-        #     print(f"{inst_id=}")
-            
-        #     _click_inst_link(driver, inst_id)
-
-        #     _wait_until_equiv_page_loaded(driver)
-        #     sleep(random.randint(1, 3))
-
-        #     download_current_page_source(driver, cur_equiv_page_dest_path)
-
-        #     # Back to inst page
-        #     _click_inst_list_link(driver)
-        #     wait_until_inst_page_loaded(driver, inst_page_num)
-        #     sleep(random.randint(1, 3))
 
         #     # if inst_id == "gdvInstWithEQ_btnCreditFromInstName_3":# TMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         #     #     break
