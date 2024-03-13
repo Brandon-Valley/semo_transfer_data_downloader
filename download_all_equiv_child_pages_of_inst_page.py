@@ -2,6 +2,7 @@ from pathlib import Path
 import random
 from time import sleep
 from selenium import webdriver
+import selenium
 from selenium.webdriver.common.by import By
 
 from selenium import webdriver
@@ -208,8 +209,14 @@ def download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver,
 
         # Back to inst page
         print(f"Finished downloading all equiv list pages for {inst_id=}, going back to institution list page...")
-        _click_inst_list_link(driver)
-        wait_until_inst_page_loaded(driver, inst_page_num)
+        inst_page_loaded = False
+        while not inst_page_loaded:
+            try:
+                _click_inst_list_link(driver)
+                wait_until_inst_page_loaded(driver, inst_page_num)
+                inst_page_loaded = True
+            except selenium.common.exceptions.TimeoutException:
+                print("got timeout exception, retrying, hope this doesn't cause an infinite loop...")
         sleep(random.randint(1, 3))
 
         #     # if inst_id == "gdvInstWithEQ_btnCreditFromInstName_3":# TMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

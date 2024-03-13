@@ -60,8 +60,6 @@ def download_current_page_source(driver, dest_path: Path):
 
 
 
-
-
 def wait_until_inst_page_loaded(driver, page_num):
     # Wait until the clicked page number is highlighted
     WebDriverWait(driver, 50).until(

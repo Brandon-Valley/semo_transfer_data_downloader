@@ -21,51 +21,16 @@ import re
 # SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
 WORKING_NAV_HTML_PATH = PAGE_DOWNLOADS_DIR_PATH / "Equiv_List_Page_Navigator_Working.html"
 
-# def _get_page_numbers_and_paging_xpaths(html_file_path):
-#     # Open and read the HTML file
-#     with open(html_file_path, 'r') as file:
-#         html = file.read()
-
-#     # Parse the HTML with BeautifulSoup
-#     soup = BeautifulSoup(html, 'html.parser')
-
-#     # Find the highlighted page number
-#     highlighted_page_num = int(soup.find('span').text)
-
-#     # Find all visible page numbers
-#     visible_page_nums = [int(a.text) for a in soup.find_all('a') if a.text.isdigit()]
-
-#     # Include the highlighted page number in the list of visible page numbers
-#     if highlighted_page_num not in visible_page_nums:
-#         visible_page_nums.append(highlighted_page_num)
-
-#     # Find the previous and next paging xpaths
-#     a_elements = soup.find_all('a')
-#     print("a_elements:")
-#     pprint(a_elements)
-    
-#     previous_paging_xpath = None
-#     next_paging_xpath = None
-#     for i, a in enumerate(a_elements):
-#         if a.text == '...':
-#             if i < len(a_elements) - 1 and a_elements[i + 1].text.isdigit():
-#                 previous_paging_xpath = f"//a[@href=\"{a['href']}\"]"
-#             if i > 0 and a_elements[i - 1].text.isdigit():
-#                 next_paging_xpath = f"//a[@href=\"{a['href']}\"]"
-
-#     return highlighted_page_num, visible_page_nums, previous_paging_xpath, next_paging_xpath
-
-
-
 
 class Equiv_List_Page_Navigator():
     def __init__(self, driver, working_html_path: Path = WORKING_NAV_HTML_PATH):
         # Starts not downloaded
         self.driver = driver
         self.cur_page_html_path = working_html_path
+        self.total_pages = None
         
         self.update_pagination_info()
-        self.total_pages = self._get_total_pages()
+        
 
     def print_pagination_vars(self):
         print("Equiv_List_Page_Navigator Pagination Vars:")
@@ -76,18 +41,7 @@ class Equiv_List_Page_Navigator():
         print(f"..{self.previous_paging_xpath=}")
         print(f"..{self.next_paging_xpath=}")
 
-    def _get_total_pages(self):
-        assert self.cur_page_html_path.is_file(), f"{self.cur_page_html_path=} is not a file"
-        soup = read_soup_from_html_file(self.cur_page_html_path)
 
-        # Find the 'span' element with id 'lblCourseEQPaginationInfo'
-        span = soup.find('span', id='lblCourseEQPaginationInfo')
-
-        if not span:
-            return 1
-
-        # Extract the total number of pages from the span's text
-        return int(span.text.split('OF')[-1])
     
     def get_current_html_path(self):
         return self.cur_page_html_path
@@ -163,11 +117,27 @@ class Equiv_List_Page_Navigator():
 
 
     def update_pagination_info(self):
+        def _get_total_pages(self):
+            assert self.cur_page_html_path.is_file(), f"{self.cur_page_html_path=} is not a file"
+            soup = read_soup_from_html_file(self.cur_page_html_path)
+
+            # Find the 'span' element with id 'lblCourseEQPaginationInfo'
+            span = soup.find('span', id='lblCourseEQPaginationInfo')
+
+            if not span:
+                return 1
+            # Extract the total number of pages from the span's text
+            return int(span.text.split('OF')[-1])
+        
+
         print(f"Updating pagination info...")
 
         # For testing
         if self.driver:
             download_current_page_source(self.driver, self.cur_page_html_path)
+
+        if not self.total_pages:
+            self.total_pages = _get_total_pages(self)
 
         # Pagination info
         self.pagination = False
@@ -196,15 +166,10 @@ class Equiv_List_Page_Navigator():
             # print(f"{td=}")
 
             try:
-                # print(f"{td['span']=}")
-                self.current_page_num = td['span']
-            except KeyError:
+                self.current_page_num = int(td.find('span').text)
+            except AttributeError:
                 pass
 
-            # if 'span' in td.keys():
-            #     self.current_page_num = int(td.text)
-
-            # href = td.find('a')['href']
             a = td.find('a')
             # print(f"{a=}")
             xpath = None
@@ -223,6 +188,9 @@ class Equiv_List_Page_Navigator():
                 continue
             
             self.visible_page_nums.append(int(td.text))
+        
+        print("Updated pagination info.")
+        self.print_pagination_vars()
 
 
 
