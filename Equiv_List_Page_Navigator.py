@@ -1,6 +1,7 @@
 from pathlib import Path
 from pprint import pprint
 import random
+import shutil
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -12,82 +13,21 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
 
-from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
+from web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, download_current_page_source, human_click_delay, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
 
+# SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
+WORKING_NAV_HTML_PATH = PAGE_DOWNLOADS_DIR_PATH / "Equiv_List_Page_Navigator_Working.html"
 
-# def _is_equiv_list_page_number_highlighted(html_file_path, page_num):
-#     """no link if highlighted, can start any page highlighted"""
-#     soup = read_soup_from_html_file(html_file_path)
-#     highlighted_page_num = soup.find('span', text=str(page_num))
-#     return highlighted_page_num is not None
+# def _get_page_numbers_and_paging_xpaths(html_file_path):
+#     # Open and read the HTML file
+#     with open(html_file_path, 'r') as file:
+#         html = file.read()
 
-# def _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, equiv_list_page_num):
-
-#     print(f"Attempting to Click non-highlighted {equiv_list_page_num=}...")
-
-#     try:
-#         link = driver.find_element(By.LINK_TEXT, str(equiv_list_page_num))
-#     except Exception as e:
-#         print(str(e))
-
-#         if equiv_list_page_num == 1:
-#             while True:
-#                 print("HOPE THIS DOESN'T CAUSE AN INFINITE LOOP")
-
-#                 # Find the first link with visible text "..." and click it
-#                 link = driver.find_element(By.XPATH, "//a[text()='...']")
-#                 link.click()
-
-#                 sleep(40) # Dont know start / what num to wait for
-#                 try:
-#                     link = driver.find_element(By.LINK_TEXT, str(equiv_list_page_num))
-#                     print("Found #1!")
-#                     break # Found #1 !!
-#                 except Exception as e:
-#                     print(f"Here we go again...{str(e)}")
-#         else:
-#             try:
-#                 link = driver.find_element(By.XPATH, f"//a[@href=\"javascript:__doPostBack('gdvCourseEQ','Page${equiv_list_page_num}')\"]")
-#             except Exception as e2:
-#                 if equiv_list_page_num == 1:
-#                     # # Find the first link with visible text "..." and click it
-#                     # link = driver.find_element(By.XPATH, "//a[text()='...']")
-#                     # FIXME??
-
-#                     raise Exception(f"Could not find non-highlighted {equiv_list_page_num=}") from e2
-
-#     link.click()
-
-#     # Wait until new paginated equiv list page has loaded
-#     wait = WebDriverWait(driver, 50)
-#     wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(equiv_list_page_num)))
-#     sleep(random.randint(1, 3)) # Mimic human delay after click
-
-# def _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id):
-#     """Get to starting position"""
-#     _click_inst_link(driver, inst_id)
-
-#     _wait_until_equiv_page_loaded(driver)
-#     sleep(random.randint(1, 3))
-
-#     # Download what is most likely to be the first equiv list page
-#     download_current_page_source(driver, equiv_page_1_dest_path)
-
-#     # Confirm this is actually page #1, if not, click page #1 and download
-#     if not _is_equiv_list_page_number_highlighted(equiv_page_1_dest_path, 1) and _get_num_equiv_list_pages_from_first_equiv_list_html_path(equiv_page_1_dest_path) > 1:
-#         print("Page #1 is not highlighted, replacing it & getting tto known starting position...")
-#         _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, 1)
-#         download_current_page_source(driver, equiv_page_1_dest_path)
-    
-#     print("Now we know equiv list page #1 is highlighted (if more than 1 page) AND downloaded!")
-
-
-# def _get_cur_equiv_list_page_position_info(html_file_path):
 #     # Parse the HTML with BeautifulSoup
-#     soup = read_soup_from_html_file(html_file_path)
+#     soup = BeautifulSoup(html, 'html.parser')
 
 #     # Find the highlighted page number
 #     highlighted_page_num = int(soup.find('span').text)
@@ -99,59 +39,135 @@ import re
 #     if highlighted_page_num not in visible_page_nums:
 #         visible_page_nums.append(highlighted_page_num)
 
-#     return highlighted_page_num, visible_page_nums
-
-
-
-
-def _get_page_numbers_and_paging_xpaths(html_file_path):
-    # Open and read the HTML file
-    with open(html_file_path, 'r') as file:
-        html = file.read()
-
-    # Parse the HTML with BeautifulSoup
-    soup = BeautifulSoup(html, 'html.parser')
-
-    # Find the highlighted page number
-    highlighted_page_num = int(soup.find('span').text)
-
-    # Find all visible page numbers
-    visible_page_nums = [int(a.text) for a in soup.find_all('a') if a.text.isdigit()]
-
-    # Include the highlighted page number in the list of visible page numbers
-    if highlighted_page_num not in visible_page_nums:
-        visible_page_nums.append(highlighted_page_num)
-
-    # Find the previous and next paging xpaths
-    a_elements = soup.find_all('a')
-    print("a_elements:")
-    pprint(a_elements)
+#     # Find the previous and next paging xpaths
+#     a_elements = soup.find_all('a')
+#     print("a_elements:")
+#     pprint(a_elements)
     
-    previous_paging_xpath = None
-    next_paging_xpath = None
-    for i, a in enumerate(a_elements):
-        if a.text == '...':
-            if i < len(a_elements) - 1 and a_elements[i + 1].text.isdigit():
-                previous_paging_xpath = f"//a[@href=\"{a['href']}\"]"
-            if i > 0 and a_elements[i - 1].text.isdigit():
-                next_paging_xpath = f"//a[@href=\"{a['href']}\"]"
+#     previous_paging_xpath = None
+#     next_paging_xpath = None
+#     for i, a in enumerate(a_elements):
+#         if a.text == '...':
+#             if i < len(a_elements) - 1 and a_elements[i + 1].text.isdigit():
+#                 previous_paging_xpath = f"//a[@href=\"{a['href']}\"]"
+#             if i > 0 and a_elements[i - 1].text.isdigit():
+#                 next_paging_xpath = f"//a[@href=\"{a['href']}\"]"
 
-    return highlighted_page_num, visible_page_nums, previous_paging_xpath, next_paging_xpath
+#     return highlighted_page_num, visible_page_nums, previous_paging_xpath, next_paging_xpath
 
 
 
 
 class Equiv_List_Page_Navigator():
-    def __init__(self, driver, cur_page_html_path: Path):
+    def __init__(self, driver, working_html_path: Path = WORKING_NAV_HTML_PATH):
         # Starts not downloaded
         self.driver = driver
-        self.cur_page_html_path = cur_page_html_path
+        self.cur_page_html_path = working_html_path
         
         self.update_pagination_info()
+        self.total_pages = self._get_total_pages()
+
+    def print_pagination_vars(self):
+        print("Equiv_List_Page_Navigator Pagination Vars:")
+        print(f"..{self.total_pages=}")
+        print(f"..{self.pagination=}")
+        print(f"..{self.current_page_num=}")
+        print(f"..{self.visible_page_nums=}")
+        print(f"..{self.previous_paging_xpath=}")
+        print(f"..{self.next_paging_xpath=}")
+
+    def _get_total_pages(self):
+        assert self.cur_page_html_path.is_file(), f"{self.cur_page_html_path=} is not a file"
+        soup = read_soup_from_html_file(self.cur_page_html_path)
+
+        # Find the 'span' element with id 'lblCourseEQPaginationInfo'
+        span = soup.find('span', id='lblCourseEQPaginationInfo')
+
+        if not span:
+            return 1
+
+        # Extract the total number of pages from the span's text
+        return int(span.text.split('OF')[-1])
+    
+    def get_current_html_path(self):
+        return self.cur_page_html_path
+    
+    def copy_current_html_to_dest(self, dest_path: Path):
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(self.cur_page_html_path, dest_path)
+    
+
+    def navigate_to_page_num_and_wait_until_loaded_if_needed(self, page_num):
+        def _click_non_current_visible_page_num_wait_until_loaded_update_pagination_info(page_num):
+            print(f"Attempting to Click {page_num=} which SHOULD be visible AND non-highlighted...")
+            assert self.pagination, f"{self.pagination=} is False"
+            assert page_num in self.visible_page_nums, f"{page_num=} not in {self.visible_page_nums=}"
+            assert page_num != self.current_page_num, f"{page_num=} is already the current page"
+
+            link = self.driver.find_element(By.LINK_TEXT, str(page_num))
+            link.click()
+
+            # Wait until new paginated equiv list page has loaded
+            wait = WebDriverWait(self.driver, 50)
+            wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(page_num)))
+            human_click_delay()
+            self.update_pagination_info()
+
+        def _click_3_dot_wait_until_loaded_update_pagination_info(mode: str):
+            def _wait_until_new_3_dot_page_loaded():
+                print("DOING IMPERFECT WAIT TO LOAD NEXT 3 DOT PAGE, IF PAGE LOADS TOO SLOW THIS WILL BREAK THINGS!")
+                sleep(50) # Not sure how to tell when next page loaded # FIXME could speed up!
+            
+            if mode == "next":
+                print(f"Attempting to navigate to NEXT 3 dots {self.next_paging_xpath=}...")
+                xpath = self.next_paging_xpath
+            elif mode == "previous" or mode == "prev":
+                print(f"Attempting to navigate to PREVIOUS 3 dots {self.next_paging_xpath=}...")
+                xpath = self.previous_paging_xpath
+            else:
+                raise ValueError(f"Invalid {mode=}")
+            
+            assert xpath, f"{xpath=} is None - {mode=}"
+
+            link = self.driver.find_element(By.XPATH, xpath)
+            link.click()
+            _wait_until_new_3_dot_page_loaded()
+            self.update_pagination_info()
+
+
+        self.update_pagination_info() # FIXME needed?
+
+        if self.current_page_num == page_num:
+            print(f"Already on {page_num=}")
+            return
+        
+        assert self.pagination, f"{self.pagination=} is False - should not be possible"
+
+        while True:
+            print('hopefully not infinite loop')
+            if page_num in self.visible_page_nums:
+                if self.current_page_num == page_num:
+                    print(f"Not sure how this is possible, but already on {page_num=}")
+                    return
+                _click_non_current_visible_page_num_wait_until_loaded_update_pagination_info(page_num)
+                return
+                
+            if page_num < self.current_page_num:
+                print(f"{page_num=} is not visible, and less than {self.current_page_num=} so clicking previous 3 dots...")
+                _click_3_dot_wait_until_loaded_update_pagination_info("previous")
+            elif page_num > self.current_page_num:
+                print(f"{page_num=} is not visible, and greater than {self.current_page_num=} so clicking next 3 dots...")
+                _click_3_dot_wait_until_loaded_update_pagination_info("next")
+            else:
+                raise ValueError(f"Invalid {page_num=} and {self.current_page_num=} - was checked above so shouldn't be possible")
 
 
     def update_pagination_info(self):
-        # download_current_page_source(self.driver, self.cur_page_html_path)#TMP
+        print(f"Updating pagination info...")
+
+        # For testing
+        if self.driver:
+            download_current_page_source(self.driver, self.cur_page_html_path)
 
         # Pagination info
         self.pagination = False
@@ -191,23 +207,24 @@ class Equiv_List_Page_Navigator():
             # href = td.find('a')['href']
             a = td.find('a')
             # print(f"{a=}")
-            href = None
+            xpath = None
             if a:
                 href = a['href']
+                xpath = f"//a[@href=\"{href}\"]"
             # print(f"{href=}")
+                
+                # f"//a[@href=\"javascript:__doPostBack('gdvCourseEQ','Page${equiv_list_page_num}')\"]"
 
             if td.text == "...":
                 if td_num == 1:
-                    self.previous_paging_xpath = href
+                    self.previous_paging_xpath = xpath
                 else:
-                    self.next_paging_xpath = href
+                    self.next_paging_xpath = xpath
                 continue
             
             self.visible_page_nums.append(int(td.text))
 
 
-
-        # self.highlighted_page_num, self.visible_page_nums, self.previous_paging_xpath, self.next_paging_xpath = _get_page_numbers_and_paging_xpaths(self.cur_page_html_path)
 
 if __name__ == "__main__":
     import os.path as path
@@ -222,14 +239,11 @@ if __name__ == "__main__":
         print(f"Testing {html_str_path}...")
         nav = Equiv_List_Page_Navigator(None, Path(html_str_path))
         print("############# RESULTS #############")
-        print(f"{nav.pagination=}")
-        print(f"{nav.current_page_num=}")
-        print(f"{nav.visible_page_nums=}")
-        print(f"{nav.previous_paging_xpath=}")
-        print(f"{nav.next_paging_xpath=}")
+        nav.print_pagination_vars()
 
     _test_html_str_path("C:/Users/Brandon/Downloads/tmp.html")
     _test_html_str_path("C:/p/semo_transfer_data_downloader/page_downloads/institution_page_downloads/equiv_w_1_page_ex.htm")
     _test_html_str_path("C:/p/semo_transfer_data_downloader/page_downloads/institution_page_downloads/equiv_11_pages_ex.html")
+    _test_html_str_path("C:/Users/Brandon/Downloads/tttTES Public View_ SOUTHEAST MISSOURI STATE UNIVERSITY.html")
 
     print("End of Main") 

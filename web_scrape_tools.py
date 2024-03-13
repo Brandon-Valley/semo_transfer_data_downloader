@@ -14,6 +14,8 @@ from selenium.webdriver.chrome.options import Options
 
 DOT_DOT_DOT_INST_PAGE_NUMS = [11, 21, 31, 41]
 
+SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
+PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads"
 
 def setup_driver():
     options = Options()
@@ -34,6 +36,11 @@ def setup_driver():
 
     driver = webdriver.Chrome(options=options)  # , desired_capabilities=capabilities if using proxy
     return driver
+
+
+def human_click_delay():
+    sleep(random.randint(1, 3)) # Mimic human delay after click
+
 
 def read_soup_from_html_file(html_path: Path) -> BeautifulSoup:
     with open(html_path, 'r', encoding='utf-8') as f:

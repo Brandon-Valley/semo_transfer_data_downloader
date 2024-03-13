@@ -9,12 +9,12 @@ from download_all_equiv_child_pages_of_inst_page import download_all_equiv_list_
 from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, setup_driver, wait_until_inst_page_loaded
 
 MAX_INST_PAGES = 41
-STARTING_INST_PAGE_NUM = 1
+STARTING_INST_PAGE_NUM = 10#TMP
 
 
 SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
-INST_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "TMP_institution_list_pages" #TMP put back after nav test
-EQUIV_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "TMP_equivalency_list_pages" #TMP put back after nav test
+INST_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "institution_list_pages"
+EQUIV_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "equivalency_list_pages"
 
 def _click_inst_page_num(driver, page_num):
     print(f"Clicking {page_num=}...")

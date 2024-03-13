@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
-from get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page import get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page
+from Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
 
 from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, read_soup_from_html_file, wait_until_inst_page_loaded
 
@@ -63,101 +63,101 @@ def _get_equiv_page_dest_path(inst_page_num, inst_id, equiv_page_num, equiv_list
     return equiv_list_dl_dir_path / f"inst_list_page_{inst_page_num}__inst_{inst_id}__equiv_list_page_{equiv_page_num}.html"
 
 
-def _download_all_equiv_list_pages_of_inst(driver, inst_id, inst_page_num, equiv_list_dl_dir_path: Path):
-    """Start and end on inst list page"""
+# def _download_all_equiv_list_pages_of_inst(driver, inst_id, inst_page_num, equiv_list_dl_dir_path: Path):
+#     """Start and end on inst list page"""
 
-    def _is_equiv_list_page_number_highlighted(html_file_path, page_num):
-        """no link if highlighted, can start any page highlighted"""
-        soup = read_soup_from_html_file(html_file_path)
-        highlighted_page_num = soup.find('span', text=str(page_num))
-        return highlighted_page_num is not None
+#     def _is_equiv_list_page_number_highlighted(html_file_path, page_num):
+#         """no link if highlighted, can start any page highlighted"""
+#         soup = read_soup_from_html_file(html_file_path)
+#         highlighted_page_num = soup.find('span', text=str(page_num))
+#         return highlighted_page_num is not None
     
-    def _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, equiv_list_page_num):
+#     def _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, equiv_list_page_num):
 
-        print(f"Attempting to Click non-highlighted {equiv_list_page_num=}...")
+#         print(f"Attempting to Click non-highlighted {equiv_list_page_num=}...")
 
-        try:
-            link = driver.find_element(By.LINK_TEXT, str(equiv_list_page_num))
-        except Exception as e:
-            print(str(e))
+#         try:
+#             link = driver.find_element(By.LINK_TEXT, str(equiv_list_page_num))
+#         except Exception as e:
+#             print(str(e))
 
-            if equiv_list_page_num == 1:
-                while True:
-                    print("HOPE THIS DOESN'T CAUSE AN INFINITE LOOP")
+#             if equiv_list_page_num == 1:
+#                 while True:
+#                     print("HOPE THIS DOESN'T CAUSE AN INFINITE LOOP")
 
-                    # Find the first link with visible text "..." and click it
-                    link = driver.find_element(By.XPATH, "//a[text()='...']")
-                    link.click()
+#                     # Find the first link with visible text "..." and click it
+#                     link = driver.find_element(By.XPATH, "//a[text()='...']")
+#                     link.click()
 
-                    sleep(40) # Dont know start / what num to wait for
-                    try:
-                        link = driver.find_element(By.LINK_TEXT, str(equiv_list_page_num))
-                        print("Found #1!")
-                        break # Found #1 !!
-                    except Exception as e:
-                        print(f"Here we go again...{str(e)}")
-            else:
-                try:
-                    link = driver.find_element(By.XPATH, f"//a[@href=\"javascript:__doPostBack('gdvCourseEQ','Page${equiv_list_page_num}')\"]")
-                except Exception as e2:
-                    if equiv_list_page_num == 1:
-                        # # Find the first link with visible text "..." and click it
-                        # link = driver.find_element(By.XPATH, "//a[text()='...']")
-                        # FIXME??
+#                     sleep(40) # Dont know start / what num to wait for
+#                     try:
+#                         link = driver.find_element(By.LINK_TEXT, str(equiv_list_page_num))
+#                         print("Found #1!")
+#                         break # Found #1 !!
+#                     except Exception as e:
+#                         print(f"Here we go again...{str(e)}")
+#             else:
+#                 try:
+#                     link = driver.find_element(By.XPATH, f"//a[@href=\"javascript:__doPostBack('gdvCourseEQ','Page${equiv_list_page_num}')\"]")
+#                 except Exception as e2:
+#                     if equiv_list_page_num == 1:
+#                         # # Find the first link with visible text "..." and click it
+#                         # link = driver.find_element(By.XPATH, "//a[text()='...']")
+#                         # FIXME??
 
-                        raise Exception(f"Could not find non-highlighted {equiv_list_page_num=}") from e2
+#                         raise Exception(f"Could not find non-highlighted {equiv_list_page_num=}") from e2
 
-        link.click()
+#         link.click()
 
-        # Wait until new paginated equiv list page has loaded
-        wait = WebDriverWait(driver, 50)
-        wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(equiv_list_page_num)))
-        sleep(random.randint(1, 3)) # Mimic human delay after click
+#         # Wait until new paginated equiv list page has loaded
+#         wait = WebDriverWait(driver, 50)
+#         wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(equiv_list_page_num)))
+#         sleep(random.randint(1, 3)) # Mimic human delay after click
 
-    def _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id):
-        """Get to starting position"""
-        _click_inst_link(driver, inst_id)
+    # def _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id):
+    #     """Get to starting position"""
+    #     _click_inst_link(driver, inst_id)
 
-        _wait_until_equiv_page_loaded(driver)
-        sleep(random.randint(1, 3))
+    #     _wait_until_equiv_page_loaded(driver)
+    #     sleep(random.randint(1, 3))
 
-        # Download what is most likely to be the first equiv list page
-        download_current_page_source(driver, equiv_page_1_dest_path)
+    #     # Download what is most likely to be the first equiv list page
+    #     download_current_page_source(driver, equiv_page_1_dest_path)
 
-        # Confirm this is actually page #1, if not, click page #1 and download
-        if not _is_equiv_list_page_number_highlighted(equiv_page_1_dest_path, 1) and _get_num_equiv_list_pages_from_first_equiv_list_html_path(equiv_page_1_dest_path) > 1:
-            print("Page #1 is not highlighted, replacing it & getting tto known starting position...")
-            _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, 1)
-            download_current_page_source(driver, equiv_page_1_dest_path)
+    #     # Confirm this is actually page #1, if not, click page #1 and download
+    #     if not _is_equiv_list_page_number_highlighted(equiv_page_1_dest_path, 1) and _get_num_equiv_list_pages_from_first_equiv_list_html_path(equiv_page_1_dest_path) > 1:
+    #         print("Page #1 is not highlighted, replacing it & getting tto known starting position...")
+    #         _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, 1)
+    #         download_current_page_source(driver, equiv_page_1_dest_path)
         
-        print("Now we know equiv list page #1 is highlighted (if more than 1 page) AND downloaded!")
+    #     print("Now we know equiv list page #1 is highlighted (if more than 1 page) AND downloaded!")
 
 
 
-    print(f"Downloading all equiv list pages of {inst_id=}...")
+    # print(f"Downloading all equiv list pages of {inst_id=}...")
 
-    # Get to starting position
-    equiv_page_1_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, 1, equiv_list_dl_dir_path)
-    _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id)
+    # # Get to starting position
+    # equiv_page_1_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, 1, equiv_list_dl_dir_path)
+    # _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id)
 
-    # FIXME pick up here!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # Handle other equiv list pages if they exist
-    print("Checking if there are more equiv list pages that need to be downloaded...")
-    num_equiv_list_pages = _get_num_equiv_list_pages_from_first_equiv_list_html_path(equiv_page_1_dest_path)
-    print(f"{num_equiv_list_pages=}")
+    # # FIXME pick up here!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # # Handle other equiv list pages if they exist
+    # print("Checking if there are more equiv list pages that need to be downloaded...")
+    # num_equiv_list_pages = _get_num_equiv_list_pages_from_first_equiv_list_html_path(equiv_page_1_dest_path)
+    # print(f"{num_equiv_list_pages=}")
 
-    for cur_equiv_page_num in range(2, num_equiv_list_pages + 1):
-        cur_equiv_page_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, cur_equiv_page_num, equiv_list_dl_dir_path)
+    # for cur_equiv_page_num in range(2, num_equiv_list_pages + 1):
+    #     cur_equiv_page_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, cur_equiv_page_num, equiv_list_dl_dir_path)
 
-        print(f"Getting {cur_equiv_page_dest_path=}...")
-        # Starts with PREVIOUS page # highlighted, ends with CURRENT page # highlighted
-        _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, cur_equiv_page_num)
-        download_current_page_source(driver, cur_equiv_page_dest_path)
+    #     print(f"Getting {cur_equiv_page_dest_path=}...")
+    #     # Starts with PREVIOUS page # highlighted, ends with CURRENT page # highlighted
+    #     _click_non_highlighted_equiv_list_page_num_and_wait_for_load(driver, cur_equiv_page_num)
+    #     download_current_page_source(driver, cur_equiv_page_dest_path)
 
-    # Back to inst page
-    _click_inst_list_link(driver)
-    wait_until_inst_page_loaded(driver, inst_page_num)
-    sleep(random.randint(1, 3))
+    # # Back to inst page
+    # _click_inst_list_link(driver)
+    # wait_until_inst_page_loaded(driver, inst_page_num)
+    # sleep(random.randint(1, 3))
 
     
 
@@ -176,6 +176,24 @@ def _all_equiv_pages_of_inst_already_downloaded(inst_page_num, inst_id, equiv_li
     return True
 
 
+def _download_all_equiv_list_pages_of_inst_starting_from_inst_list_page(driver, inst_id, inst_page_num, equiv_list_dl_dir_path: Path):
+    """Ends on last equiv list page of given inst"""
+    print(f"Downloading all equiv list pages of {inst_id=} - (assuming that this is starting on the institution list page)...")
+
+    # Click the institution link, this could put you on ANY equiv list page for the institution
+    _click_inst_link(driver, inst_id)
+    _wait_until_equiv_page_loaded(driver)
+    sleep(random.randint(1, 3))
+
+    # Get to known starting position (this also downloads the first equiv list page)
+    nav = Equiv_List_Page_Navigator(driver)
+
+    # Download all other equiv list pages for the given institution
+    for cur_page_num in range(1, nav.total_pages + 1):
+        nav.navigate_to_page_num_and_wait_until_loaded_if_needed(page_num=cur_page_num)
+        cur_page_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, cur_page_num, equiv_list_dl_dir_path)
+        nav.copy_current_html_to_dest(cur_page_dest_path)
+
 
 def download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver, inst_page_dest_path, inst_page_num, equiv_list_dl_dir_path: Path):
     """Returns ['gdvInstWithEQ_btnCreditFromInstName_0', 'gdvInstWithEQ_btnCreditFromInstName_1', 'gdvInstWithEQ_btnCreditFromInstName_2', ...]"""
@@ -186,18 +204,13 @@ def download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver,
             print(f"Skipping all equiv pages of {inst_id=} because they already exist...")
             continue
 
-        # Click the institution link, this could put you on ANY equiv list page for the institution
-        _click_inst_link(driver, inst_id)
-        _wait_until_equiv_page_loaded(driver)
+        _download_all_equiv_list_pages_of_inst_starting_from_inst_list_page(driver, inst_id, inst_page_num, equiv_list_dl_dir_path)
+
+        # Back to inst page
+        print(f"Finished downloading all equiv list pages for {inst_id=}, going back to institution list page...")
+        _click_inst_list_link(driver)
+        wait_until_inst_page_loaded(driver, inst_page_num)
         sleep(random.randint(1, 3))
-
-        # Get to known starting position (this also downloads the first equiv list page)
-        equiv_page_1_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, 1, equiv_list_dl_dir_path)
-        get_to_first_equiv_list_page_downloaded_and_highlighted_from_any_inst_equiv_list_page(driver, equiv_page_1_dest_path)
-        print("At starting position!")
-
-
-        _download_all_equiv_list_pages_of_inst(driver, inst_id, inst_page_num, equiv_list_dl_dir_path)
 
         #     # if inst_id == "gdvInstWithEQ_btnCreditFromInstName_3":# TMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         #     #     break
