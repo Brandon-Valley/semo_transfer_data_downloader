@@ -17,6 +17,9 @@ DOT_DOT_DOT_INST_PAGE_NUMS = [11, 21, 31, 41]
 SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
 PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads"
 
+class ProbablyGotDetectedAsBotException(Exception):
+    pass
+
 def setup_driver():
     options = Options()
     # options.add_argument("--headless")  # Uncomment if you run in a headless environment

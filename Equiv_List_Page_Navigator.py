@@ -4,6 +4,7 @@ import random
 import shutil
 from time import sleep
 from selenium import webdriver
+import selenium
 from selenium.webdriver.common.by import By
 
 from selenium import webdriver
@@ -13,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
 
-from web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, download_current_page_source, human_click_delay, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
+from web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, ProbablyGotDetectedAsBotException, download_current_page_source, human_click_delay, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
@@ -58,12 +59,28 @@ class Equiv_List_Page_Navigator():
             assert page_num in self.visible_page_nums, f"{page_num=} not in {self.visible_page_nums=}"
             assert page_num != self.current_page_num, f"{page_num=} is already the current page"
 
-            link = self.driver.find_element(By.LINK_TEXT, str(page_num))
-            link.click()
+            # while True:
+            #     try:
+            #         link = self.driver.find_element(By.LINK_TEXT, str(page_num))
+            #         link.click()
 
-            # Wait until new paginated equiv list page has loaded
-            wait = WebDriverWait(self.driver, 50)
-            wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(page_num)))
+            #         # Wait until new paginated equiv list page has loaded
+            #         wait = WebDriverWait(self.driver, 50)
+            #         wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(page_num)))
+            #     except selenium.common.exceptions.TimeoutException:
+            #         print("Got timeout - click failed? - retrying...")
+            #     break
+            
+            try:
+                link = self.driver.find_element(By.LINK_TEXT, str(page_num))
+                link.click()
+
+                # Wait until new paginated equiv list page has loaded
+                wait = WebDriverWait(self.driver, 50)
+                wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(page_num)))
+            except selenium.common.exceptions.TimeoutException:
+                raise ProbablyGotDetectedAsBotException("Got timeout exception on back to paginated equiv list page load, this probably means you actually got a 403 b/c bot detected")
+
             human_click_delay()
             self.update_pagination_info()
 

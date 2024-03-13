@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
 
-from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, read_soup_from_html_file, wait_until_inst_page_loaded
+from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, read_soup_from_html_file, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
@@ -209,15 +209,23 @@ def download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver,
 
         # Back to inst page
         print(f"Finished downloading all equiv list pages for {inst_id=}, going back to institution list page...")
-        inst_page_loaded = False
-        while not inst_page_loaded:
-            try:
-                _click_inst_list_link(driver)
-                wait_until_inst_page_loaded(driver, inst_page_num)
-                inst_page_loaded = True
-            except selenium.common.exceptions.TimeoutException:
-                print("got timeout exception, retrying, hope this doesn't cause an infinite loop...")
+        # inst_page_loaded = False
+        # while not inst_page_loaded:
+        #     try:
+        #         _click_inst_list_link(driver)
+        #         wait_until_inst_page_loaded(driver, inst_page_num)
+        #         inst_page_loaded = True
+        #     except selenium.common.exceptions.TimeoutException:
+        #         print("got timeout exception, retrying, hope this doesn't cause an infinite loop...")
+        # sleep(random.randint(1, 3))
+
+        try:
+            _click_inst_list_link(driver)
+            wait_until_inst_page_loaded(driver, inst_page_num)
+        except selenium.common.exceptions.TimeoutException:
+            raise ProbablyGotDetectedAsBotException("Got timeout exception on back to inst list click, this probably means you actually got a 403 b/c bot detected")
         sleep(random.randint(1, 3))
+
 
         #     # if inst_id == "gdvInstWithEQ_btnCreditFromInstName_3":# TMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         #     #     break
