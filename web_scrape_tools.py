@@ -1,6 +1,6 @@
 from pathlib import Path
 import random
-from time import sleep
+from time import sleep, time
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,6 +10,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from pathlib import Path
+import random
+import time
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
 
 DOT_DOT_DOT_INST_PAGE_NUMS = [11, 21, 31, 41]
@@ -40,9 +51,23 @@ def setup_driver():
     driver = webdriver.Chrome(options=options)  # , desired_capabilities=capabilities if using proxy
     return driver
 
+def human_click(driver, element):
+    action = ActionChains(driver)
+    action.move_to_element(element).pause(random.uniform(0.5, 1.5)).click().perform()
+    human_click_delay()
+
+
+def human_scroll(driver, element=None):
+    if element:
+        driver.execute_script("arguments[0].scrollIntoView(true);", element)
+    else:
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(random.uniform(0.5, 2))  # Simulate reading time after scrolling
+
 
 def human_click_delay():
-    sleep(random.randint(1, 3)) # Mimic human delay after click
+    time.sleep(random.uniform(1, 3))  # Simulate reading or hesitation time
+
 
 
 def read_soup_from_html_file(html_path: Path) -> BeautifulSoup:

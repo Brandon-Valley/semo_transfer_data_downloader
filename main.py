@@ -9,7 +9,7 @@ from download_all_equiv_child_pages_of_inst_page import download_all_equiv_list_
 from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, human_click_delay, setup_driver, wait_until_inst_page_loaded
 
 MAX_INST_PAGES = 41
-STARTING_INST_PAGE_NUM = 38#TMP
+STARTING_INST_PAGE_NUM = 39#TMP NEVER FINISHED PAGE 38!@@!!!!!!!!!
 
 
 SCRIPT_PARENT_DIR_PATH = Path(__file__).parent

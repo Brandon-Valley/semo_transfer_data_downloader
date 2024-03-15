@@ -64,14 +64,14 @@
 #     # Wait until new paginated equiv list page has loaded
 #     wait = WebDriverWait(driver, 50)
 #     wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(equiv_list_page_num)))
-#     sleep(random.randint(1, 3)) # Mimic human delay after click
+#     human_click_delay() # Mimic human delay after click
 
 # def _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id):
 #     """Get to starting position"""
 #     _click_inst_link(driver, inst_id)
 
 #     _wait_until_equiv_page_loaded(driver)
-#     sleep(random.randint(1, 3))
+#     human_click_delay()
 
 #     # Download what is most likely to be the first equiv list page
 #     download_current_page_source(driver, equiv_page_1_dest_path)

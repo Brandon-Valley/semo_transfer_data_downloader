@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
 
-from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, read_soup_from_html_file, wait_until_inst_page_loaded
+from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, human_click_delay, read_soup_from_html_file, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
@@ -113,14 +113,14 @@ def _get_equiv_page_dest_path(inst_page_num, inst_id, equiv_page_num, equiv_list
 #         # Wait until new paginated equiv list page has loaded
 #         wait = WebDriverWait(driver, 50)
 #         wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(equiv_list_page_num)))
-#         sleep(random.randint(1, 3)) # Mimic human delay after click
+#         human_click_delay() # Mimic human delay after click
 
     # def _get_to_first_equiv_list_page_downloaded_and_highlighted(driver, equiv_page_1_dest_path, inst_id):
     #     """Get to starting position"""
     #     _click_inst_link(driver, inst_id)
 
     #     _wait_until_equiv_page_loaded(driver)
-    #     sleep(random.randint(1, 3))
+    #     human_click_delay()
 
     #     # Download what is most likely to be the first equiv list page
     #     download_current_page_source(driver, equiv_page_1_dest_path)
@@ -158,7 +158,7 @@ def _get_equiv_page_dest_path(inst_page_num, inst_id, equiv_page_num, equiv_list
     # # Back to inst page
     # _click_inst_list_link(driver)
     # wait_until_inst_page_loaded(driver, inst_page_num)
-    # sleep(random.randint(1, 3))
+    # human_click_delay()
 
     
 
@@ -184,7 +184,7 @@ def _download_all_equiv_list_pages_of_inst_starting_from_inst_list_page(driver, 
     # Click the institution link, this could put you on ANY equiv list page for the institution
     _click_inst_link(driver, inst_id)
     _wait_until_equiv_page_loaded(driver)
-    sleep(random.randint(1, 3))
+    human_click_delay()
 
     # Get to known starting position (this also downloads the first equiv list page)
     nav = Equiv_List_Page_Navigator(driver)
@@ -217,14 +217,14 @@ def download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver,
         #         inst_page_loaded = True
         #     except selenium.common.exceptions.TimeoutException:
         #         print("got timeout exception, retrying, hope this doesn't cause an infinite loop...")
-        # sleep(random.randint(1, 3))
+        # human_click_delay()
 
         try:
             _click_inst_list_link(driver)
             wait_until_inst_page_loaded(driver, inst_page_num)
         except selenium.common.exceptions.TimeoutException:
             raise ProbablyGotDetectedAsBotException("Got timeout exception on back to inst list click, this probably means you actually got a 403 b/c bot detected")
-        sleep(random.randint(1, 3))
+        human_click_delay()
 
 
         #     # if inst_id == "gdvInstWithEQ_btnCreditFromInstName_3":# TMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
