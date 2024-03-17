@@ -30,7 +30,7 @@ def _goto_clickable_inst_list_page_num(driver, clickable_inst_list_page_num):
     wait_until_inst_page_loaded(driver, clickable_inst_list_page_num)
     human_click_delay()
 
-def run():
+def scrape_html():
     """Scrape all institution list pages and all equivalency list pages of all institutions on each institution list page."""
 
     driver = setup_driver()
