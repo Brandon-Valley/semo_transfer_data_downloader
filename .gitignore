@@ -165,3 +165,4 @@ page_downloads/*
 ignore/*
 work/**
 tests/outputs/**
+semo_transfer_data_downloader/scrape_html/page_downloads/Equiv_List_Page_Navigator_Working.html
