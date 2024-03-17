@@ -147,3 +147,20 @@ def write_csv_from_row_dicts(row_dicts: dict, csv_path: Path, ordered_headers: O
         dict_writer = csv.DictWriter(output_file, fieldnames=ordered_fieldname_dict.keys())
         dict_writer.writeheader()
         dict_writer.writerows(row_dicts)
+
+
+def delete_last_n_rows_from_csv(csv_path: Path, num_rows_to_delete: int) -> None:
+    """
+    Deletes the last `n` rows from a .csv file
+        - Example - num_rows_to_delete = 1 would only delete the last row
+    """
+    assert isinstance(csv_path, Path), f"Expected pathlib.Path object from {csv_path=}, got {type(csv_path)=}"
+    assert csv_path.is_file(), csv_path
+
+    # Read the CSV
+    with open(csv_path, "r") as f:
+        lines = f.readlines()
+
+    # Write the CSV back, minus the last `n` lines
+    with open(csv_path, "w") as f:
+        f.writelines(lines[:-num_rows_to_delete])
