@@ -1,4 +1,4 @@
-from semo_transfer_data_downloader import main
+from semo_transfer_data_downloader import __main__
 
 
-main()
+__main__()

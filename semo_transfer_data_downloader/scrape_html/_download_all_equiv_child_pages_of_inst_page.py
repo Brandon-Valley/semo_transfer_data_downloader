@@ -11,11 +11,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
-from src.scrape_html._Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
 
-from src.scrape_html._web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, wait_until_inst_page_loaded
+from ._Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
+from ._web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, wait_until_inst_page_loaded
 
-from bs4 import BeautifulSoup
 import re
 
 def _get_num_equiv_list_pages_from_first_equiv_list_html_path(file_path):

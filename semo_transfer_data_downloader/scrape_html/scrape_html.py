@@ -8,7 +8,6 @@ from selenium.webdriver.common.proxy import Proxy, ProxyType
 from semo_transfer_data_downloader import cfg
 from semo_transfer_data_downloader.scrape_html._web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, human_click, human_click_delay, setup_driver, wait_until_inst_page_loaded, download_current_page_source
 from semo_transfer_data_downloader.scrape_html._download_all_equiv_child_pages_of_inst_page import download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page
-from src import cfg
 
 MAX_INST_PAGES = 41
 STARTING_INST_PAGE_NUM = 1
