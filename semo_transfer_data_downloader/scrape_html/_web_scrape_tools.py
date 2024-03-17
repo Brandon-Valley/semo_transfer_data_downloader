@@ -28,8 +28,10 @@ DOT_DOT_DOT_INST_PAGE_NUMS = [11, 21, 31, 41]
 SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
 PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads"
 
+
 class ProbablyGotDetectedAsBotException(Exception):
     pass
+
 
 def setup_driver():
     options = Options()
@@ -38,7 +40,9 @@ def setup_driver():
     options.add_argument("disable-infobars")
     options.add_argument("--disable-extensions")
     # Change user agent to avoid detection
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"
+    )
 
     # Setup proxy if you have one - this is optional and can be commented out if not needed
     # proxy = Proxy()
@@ -50,6 +54,7 @@ def setup_driver():
 
     driver = webdriver.Chrome(options=options)  # , desired_capabilities=capabilities if using proxy
     return driver
+
 
 def human_click(driver, element):
     action = ActionChains(driver)
@@ -69,11 +74,11 @@ def human_click_delay():
     time.sleep(random.uniform(1, 3))  # Simulate reading or hesitation time
 
 
-
 def read_soup_from_html_file(html_path: Path) -> BeautifulSoup:
-    with open(html_path, 'r', encoding='utf-8') as f:
+    with open(html_path, "r", encoding="utf-8") as f:
         contents = f.read()
-    return BeautifulSoup(contents, 'html.parser')
+    return BeautifulSoup(contents, "html.parser")
+
 
 def download_current_page_source(driver, dest_path: Path):
     print(f"Downloading current page source to {dest_path=}...")
@@ -83,14 +88,11 @@ def download_current_page_source(driver, dest_path: Path):
 
     # Save the page source to a file
     dest_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(dest_path, 'w', encoding='utf-8') as file:
+    with open(dest_path, "w", encoding="utf-8") as file:
         file.write(html_content)
-
 
 
 def wait_until_inst_page_loaded(driver, page_num):
     # Wait until the clicked page number is highlighted
-    WebDriverWait(driver, 50).until(
-        EC.presence_of_element_located((By.XPATH, f"//span[text()='{page_num}']"))
-    )
+    WebDriverWait(driver, 50).until(EC.presence_of_element_located((By.XPATH, f"//span[text()='{page_num}']")))
     # sleep(random.randint(1, 5))
