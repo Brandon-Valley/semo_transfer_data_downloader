@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 
 from download_all_equiv_child_pages_of_inst_page import download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page
+from src import cfg
 from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, human_click, human_click_delay, setup_driver, wait_until_inst_page_loaded
 
 MAX_INST_PAGES = 41
@@ -13,8 +14,8 @@ STARTING_INST_PAGE_NUM = 38#TMP NEVER FINISHED PAGE 38!@@!!!!!!!!!
 
 
 SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
-INST_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "institution_list_pages"
-EQUIV_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "equivalency_list_pages"
+# INST_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "institution_list_pages"
+# EQUIV_LIST_PAGE_DOWNLOADS_DIR_PATH = SCRIPT_PARENT_DIR_PATH / "page_downloads" / "equivalency_list_pages"
 
 def _click_inst_page_num(driver, page_num):
     print(f"Clicking {page_num=}...")
@@ -52,9 +53,9 @@ for inst_page_num in range(STARTING_INST_PAGE_NUM, MAX_INST_PAGES + 1):
     wait_until_inst_page_loaded(driver, inst_page_num)
     human_click_delay()
 
-    inst_page_dest_path = INST_LIST_PAGE_DOWNLOADS_DIR_PATH / f"inst_list_page_{inst_page_num}.html"
+    inst_page_dest_path = cfg.INST_LIST_PAGE_DOWNLOADS_DIR_PATH / f"inst_list_page_{inst_page_num}.html"
     download_current_page_source(driver, inst_page_dest_path)
 
-    download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver, inst_page_dest_path, inst_page_num, EQUIV_LIST_PAGE_DOWNLOADS_DIR_PATH)
+    download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(driver, inst_page_dest_path, inst_page_num, cfg.EQUIV_LIST_PAGE_DOWNLOADS_DIR_PATH)
 
 driver.quit()
