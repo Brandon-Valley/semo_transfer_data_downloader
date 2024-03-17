@@ -164,3 +164,4 @@ cython_debug/
 page_downloads/*
 ignore/*
 work/**
+tests/outputs/**
