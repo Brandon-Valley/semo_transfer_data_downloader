@@ -19,7 +19,7 @@ EXPECTED_OUTPUT = [
 
 
 # @pytest.mark.skip()
-def _test_inst_list_html_to_csv():
+def test_inst_list_html_to_csv():
     _inst_list_html_to_csv(
         in_html_path=TEST_INPUTS_DIR_PATH / "inst_list_page_41.html",
         out_csv_path=INST_LIST_41_CSV_PATH,
@@ -32,5 +32,5 @@ def _test_inst_list_html_to_csv():
     assert row_dicts == EXPECTED_OUTPUT
 
 
-def test_inst_list_html_to_csv():
-    print("hi")
+# def test_inst_list_html_to_csv():
+#     print("hi")

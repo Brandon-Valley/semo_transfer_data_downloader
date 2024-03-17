@@ -1,5 +1,6 @@
 import csv
 from pathlib import Path
+import pprint
 from semo_transfer_data_downloader.utils import file_sys_utils
 from semo_transfer_data_downloader.utils.html_io_utils import read_soup_from_html_file
 
@@ -27,15 +28,18 @@ def _inst_list_html_to_csv(in_html_path: Path, out_csv_path: Path) -> None:
     # Assuming each institution's info is within <tr> tags directly under the table
     for tr in table.find_all("tr")[2:]:  # Skip header rows if necessary
         cols = tr.find_all("td")
+        # print("cols:")
+        # pprint(cols.)  # TMP
+
         if len(cols) > 1:  # Ensure there are enough columns
             # Extract text from each column. Adjust indices as necessary.
             institution_name = cols[0].text.strip()
             city = cols[1].text.strip()
             state = cols[2].text.strip()
 
-            # Append the collected data to the rows list (if legit)
-            if not institution_name.startswith("..."):
-                rows.append([institution_name, city, state])
+            # # Append the collected data to the rows list (if legit)
+            # if not institution_name.startswith("..."):
+            rows.append([institution_name, city, state])
 
     out_csv_path.parent.mkdir(parents=True, exist_ok=True)
 
