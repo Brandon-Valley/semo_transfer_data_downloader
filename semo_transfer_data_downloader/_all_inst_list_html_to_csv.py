@@ -2,7 +2,7 @@ import csv
 from pathlib import Path
 import pprint
 from semo_transfer_data_downloader.utils import file_sys_utils
-from semo_transfer_data_downloader.utils.file_io_utils import delete_last_n_rows_from_csv
+from semo_transfer_data_downloader.utils.file_io_utils import delete_last_n_lines_from_txt
 from semo_transfer_data_downloader.utils.html_io_utils import read_soup_from_html_file
 
 
@@ -53,7 +53,7 @@ def _inst_list_html_to_csv(in_html_path: Path, out_csv_path: Path) -> None:
         writer.writerows(rows)
 
     # HACK Above always adds 2 junk rows and Im lazy
-    delete_last_n_rows_from_csv(out_csv_path, 2)
+    delete_last_n_lines_from_txt(out_csv_path, 2)
 
     print(f"Data successfully written to {out_csv_path}")
 

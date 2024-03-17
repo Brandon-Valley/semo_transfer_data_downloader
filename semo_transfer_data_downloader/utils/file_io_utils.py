@@ -68,6 +68,26 @@ def write_txt_from_lines(
             f.write("\n".join(str(line) for line in lines))
 
 
+def delete_last_n_lines_from_txt(file_path: Path, num_lines_to_delete: int) -> None:
+    """
+    Deletes the last `num_lines_to_delete` lines from a text file.
+
+    Args:
+        file_path: The path to the file.
+        num_lines_to_delete: The number of lines to delete.
+    """
+    assert isinstance(file_path, Path), f"Expected pathlib.Path object from {file_path=}, got {type(file_path)=}"
+    assert file_path.is_file(), file_path
+
+    # Read lines from file
+    with open(file_path, "r") as f:
+        lines = f.readlines()
+
+    # Write lines back to file
+    with open(file_path, "w") as f:
+        f.writelines(lines[:-num_lines_to_delete])
+
+
 ########################################################################################################################
 #  JSON
 ########################################################################################################################
@@ -147,20 +167,3 @@ def write_csv_from_row_dicts(row_dicts: dict, csv_path: Path, ordered_headers: O
         dict_writer = csv.DictWriter(output_file, fieldnames=ordered_fieldname_dict.keys())
         dict_writer.writeheader()
         dict_writer.writerows(row_dicts)
-
-
-def delete_last_n_rows_from_csv(csv_path: Path, num_rows_to_delete: int) -> None:
-    """
-    Deletes the last `n` rows from a .csv file
-        - Example - num_rows_to_delete = 1 would only delete the last row
-    """
-    assert isinstance(csv_path, Path), f"Expected pathlib.Path object from {csv_path=}, got {type(csv_path)=}"
-    assert csv_path.is_file(), csv_path
-
-    # Read the CSV
-    with open(csv_path, "r") as f:
-        lines = f.readlines()
-
-    # Write the CSV back, minus the last `n` lines
-    with open(csv_path, "w") as f:
-        f.writelines(lines[:-num_rows_to_delete])
