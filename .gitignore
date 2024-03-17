@@ -163,3 +163,4 @@ cython_debug/
 .vscode/*
 page_downloads/*
 ignore/*
+work/**

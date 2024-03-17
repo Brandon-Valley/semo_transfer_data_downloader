@@ -11,9 +11,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
-from Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
+from semo_transfer_data_downloader.scrape_html._Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
 
-from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, wait_until_inst_page_loaded
+from semo_transfer_data_downloader.scrape_html._web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re

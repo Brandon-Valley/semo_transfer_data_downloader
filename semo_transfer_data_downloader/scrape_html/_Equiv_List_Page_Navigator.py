@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
 
-from web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
+from semo_transfer_data_downloader.scrape_html._web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
