@@ -7,12 +7,12 @@ from tests.cmn import TEST_OUTPUTS_DIR_PATH
 
 INST_LIST_41_CSV_PATH = TEST_OUTPUTS_DIR_PATH / "inst_list_page_41.csv"
 EXPECTED_OUTPUT = [
-    {"City": "CINCINNATI", "Institution Name": "XAVIER UNIVERSITY", "State": "OH"},
-    {"City": "NEW ORLEANS", "Institution Name": "XAVIER UNIVERSITY OF LOUISIANA", "State": "LA"},
-    {"City": "YAKIMA", "Institution Name": "YAKIMA VALLEY COLLEGE", "State": "WA"},
-    {"City": "YORK", "Institution Name": "YORK COLLEGE", "State": "NE"},
-    {"City": "YOUNG HARRIS", "Institution Name": "YOUNG HARRIS COLLEGE", "State": "GA"},
-    {"City": "MARYSVILLE", "Institution Name": "YUBA COLLEGE", "State": "CA"},
+    {"city": "CINCINNATI", "institution_name": "XAVIER UNIVERSITY", "state": "OH"},
+    {"city": "NEW ORLEANS", "institution_name": "XAVIER UNIVERSITY OF LOUISIANA", "state": "LA"},
+    {"city": "YAKIMA", "institution_name": "YAKIMA VALLEY COLLEGE", "state": "WA"},
+    {"city": "YORK", "institution_name": "YORK COLLEGE", "state": "NE"},
+    {"city": "YOUNG HARRIS", "institution_name": "YOUNG HARRIS COLLEGE", "state": "GA"},
+    {"city": "MARYSVILLE", "institution_name": "YUBA COLLEGE", "state": "CA"},
 ]
 
 

@@ -42,7 +42,7 @@ def inst_list_html_to_csv(in_html_path: Path, out_csv_path: Path) -> None:
     with open(out_csv_path, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         # Optional: write header
-        writer.writerow(["Institution Name", "City", "State"])
+        writer.writerow(["institution_name", "city", "state"])
         # Write the data rows
         writer.writerows(rows)
 
