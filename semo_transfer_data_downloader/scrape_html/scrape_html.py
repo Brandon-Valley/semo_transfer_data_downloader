@@ -5,7 +5,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 
-from semo_transfer_data_downloader import cfg
 from semo_transfer_data_downloader.scrape_html._web_scrape_tools import (
     DOT_DOT_DOT_INST_PAGE_NUMS,
     human_click,
