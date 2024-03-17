@@ -19,7 +19,6 @@ from ._web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, ProbablyGotDetectedAsBot
 from bs4 import BeautifulSoup
 import re
 
-# SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
 WORKING_NAV_HTML_PATH = PAGE_DOWNLOADS_DIR_PATH / "Equiv_List_Page_Navigator_Working.html"
 
 
