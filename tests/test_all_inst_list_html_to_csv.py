@@ -4,7 +4,7 @@ from pprint import pprint
 from semo_transfer_data_downloader.utils import file_io_utils
 from tests.cmn import TEST_INPUTS_DIR_PATH
 from tests.cmn import TEST_OUTPUTS_DIR_PATH
-from semo_transfer_data_downloader._all_inst_list_html_to_csv import inst_list_html_to_csv
+from semo_transfer_data_downloader._all_inst_list_html_to_csv import _inst_list_html_to_csv
 import pytest
 
 INST_LIST_41_CSV_PATH = TEST_OUTPUTS_DIR_PATH / "inst_list_page_41.csv"
@@ -18,9 +18,9 @@ EXPECTED_OUTPUT = [
 ]
 
 
-@pytest.mark.skip()
-def test_inst_list_html_to_csv():
-    inst_list_html_to_csv(
+# @pytest.mark.skip()
+def _test_inst_list_html_to_csv():
+    _inst_list_html_to_csv(
         in_html_path=TEST_INPUTS_DIR_PATH / "inst_list_page_41.html",
         out_csv_path=INST_LIST_41_CSV_PATH,
     )

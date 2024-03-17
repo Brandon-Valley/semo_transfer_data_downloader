@@ -3,7 +3,7 @@ from pathlib import Path
 from semo_transfer_data_downloader.utils.html_io_utils import read_soup_from_html_file
 
 
-def inst_list_html_to_csv(in_html_path: Path, out_csv_path: Path) -> None:
+def _inst_list_html_to_csv(in_html_path: Path, out_csv_path: Path) -> None:
     """
     Convert the html file to csv file
     :param html_file: html file
