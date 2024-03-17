@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from Equiv_List_Page_Navigator import Equiv_List_Page_Navigator
 
-from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, human_click_delay, read_soup_from_html_file, wait_until_inst_page_loaded
+from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
@@ -46,12 +46,12 @@ def _click_inst_link(driver, inst_id):
 
     print(f"Clicking {inst_id=}...")
     link = driver.find_element(By.ID, inst_id)
-    link.click()
+    human_click(driver, link)
 
 def _click_inst_list_link(driver):
     print(f"Clicking INSTITUTION LIST...")
     link = driver.find_element(By.LINK_TEXT, "INSTITUTION LIST")
-    link.click()
+    human_click(driver, link)
 
 def _wait_until_equiv_page_loaded(driver):
     # Wait until the "EQUIVALENCY LIST" has loaded
@@ -88,7 +88,7 @@ def _get_equiv_page_dest_path(inst_page_num, inst_id, equiv_page_num, equiv_list
 
 #                     # Find the first link with visible text "..." and click it
 #                     link = driver.find_element(By.XPATH, "//a[text()='...']")
-#                     link.click()
+#                     human_click(driver, link)
 
 #                     sleep(40) # Dont know start / what num to wait for
 #                     try:
@@ -108,7 +108,7 @@ def _get_equiv_page_dest_path(inst_page_num, inst_id, equiv_page_num, equiv_list
 
 #                         raise Exception(f"Could not find non-highlighted {equiv_list_page_num=}") from e2
 
-#         link.click()
+#         human_click(driver, link)
 
 #         # Wait until new paginated equiv list page has loaded
 #         wait = WebDriverWait(driver, 50)
@@ -191,7 +191,7 @@ def _download_all_equiv_list_pages_of_inst_starting_from_inst_list_page(driver, 
 
     # Download all other equiv list pages for the given institution
     for cur_page_num in range(1, nav.total_pages + 1):
-        nav.navigate_to_page_num_and_wait_until_loaded_if_needed(page_num=cur_page_num)
+        nav.navigate_to_page_num_and_wait_until_loaded_if_needed(driver, page_num=cur_page_num)
         cur_page_dest_path = _get_equiv_page_dest_path(inst_page_num, inst_id, cur_page_num, equiv_list_dl_dir_path)
         nav.copy_current_html_to_dest(cur_page_dest_path)
 

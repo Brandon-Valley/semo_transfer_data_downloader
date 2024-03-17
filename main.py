@@ -6,10 +6,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 
 from download_all_equiv_child_pages_of_inst_page import download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page
-from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, human_click_delay, setup_driver, wait_until_inst_page_loaded
+from web_scrape_tools import DOT_DOT_DOT_INST_PAGE_NUMS, download_current_page_source, human_click, human_click_delay, setup_driver, wait_until_inst_page_loaded
 
 MAX_INST_PAGES = 41
-STARTING_INST_PAGE_NUM = 39#TMP NEVER FINISHED PAGE 38!@@!!!!!!!!!
+STARTING_INST_PAGE_NUM = 38#TMP NEVER FINISHED PAGE 38!@@!!!!!!!!!
 
 
 SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
@@ -23,8 +23,7 @@ def _click_inst_page_num(driver, page_num):
         link = driver.find_element(By.XPATH, f"//a[@href=\"javascript:__doPostBack('gdvInstWithEQ','Page${page_num}')\"]")
     else:
         link = driver.find_element(By.LINK_TEXT, str(page_num))
-    link.click()
-    human_click_delay()
+    human_click(driver, link)
 
 def _goto_clickable_inst_list_page_num(driver, clickable_inst_list_page_num):
     print(f"Clicking and loading what SHOULD BE clickable page num: {clickable_inst_list_page_num}...")

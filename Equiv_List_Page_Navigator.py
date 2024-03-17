@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
 
-from web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, ProbablyGotDetectedAsBotException, download_current_page_source, human_click_delay, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
+from web_scrape_tools import PAGE_DOWNLOADS_DIR_PATH, ProbablyGotDetectedAsBotException, download_current_page_source, human_click, human_click_delay, read_soup_from_html_file, setup_driver, wait_until_inst_page_loaded
 
 from bs4 import BeautifulSoup
 import re
@@ -52,28 +52,16 @@ class Equiv_List_Page_Navigator():
         shutil.copy(self.cur_page_html_path, dest_path)
     
 
-    def navigate_to_page_num_and_wait_until_loaded_if_needed(self, page_num):
+    def navigate_to_page_num_and_wait_until_loaded_if_needed(self, driver, page_num):
         def _click_non_current_visible_page_num_wait_until_loaded_update_pagination_info(page_num):
             print(f"Attempting to Click {page_num=} which SHOULD be visible AND non-highlighted...")
             assert self.pagination, f"{self.pagination=} is False"
             assert page_num in self.visible_page_nums, f"{page_num=} not in {self.visible_page_nums=}"
             assert page_num != self.current_page_num, f"{page_num=} is already the current page"
-
-            # while True:
-            #     try:
-            #         link = self.driver.find_element(By.LINK_TEXT, str(page_num))
-            #         link.click()
-
-            #         # Wait until new paginated equiv list page has loaded
-            #         wait = WebDriverWait(self.driver, 50)
-            #         wait.until(EC.text_to_be_present_in_element((By.XPATH, "//td/span"), str(page_num)))
-            #     except selenium.common.exceptions.TimeoutException:
-            #         print("Got timeout - click failed? - retrying...")
-            #     break
             
             try:
                 link = self.driver.find_element(By.LINK_TEXT, str(page_num))
-                link.click()
+                human_click(driver, link)
 
                 # Wait until new paginated equiv list page has loaded
                 wait = WebDriverWait(self.driver, 50)
@@ -101,7 +89,7 @@ class Equiv_List_Page_Navigator():
             assert xpath, f"{xpath=} is None - {mode=}"
 
             link = self.driver.find_element(By.XPATH, xpath)
-            link.click()
+            human_click(driver, link)
             _wait_until_new_3_dot_page_loaded()
             self.update_pagination_info()
 
