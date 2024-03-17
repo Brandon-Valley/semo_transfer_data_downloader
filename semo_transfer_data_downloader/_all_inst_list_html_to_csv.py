@@ -1,5 +1,6 @@
 import csv
 from pathlib import Path
+from semo_transfer_data_downloader.utils import file_sys_utils
 from semo_transfer_data_downloader.utils.html_io_utils import read_soup_from_html_file
 
 
@@ -47,3 +48,17 @@ def _inst_list_html_to_csv(in_html_path: Path, out_csv_path: Path) -> None:
         writer.writerows(rows)
 
     print(f"Data successfully written to {out_csv_path}")
+
+
+def all_inst_list_html_to_csv(in_dir_path: Path, out_dir_path: Path) -> None:
+    """
+    Convert all html files in in_dir_path to csv files in out_dir_path
+    :param in_dir_path: input directory containing html files
+    :param out_dir_path: output directory to contain csv files
+    :return: None
+    """
+
+    for html_path in file_sys_utils.get_abs_path_generator_to_child_files_no_recurs(in_dir_path):
+        html_file_name = html_path.name
+        out_csv_path = out_dir_path / f"{html_file_name}.csv"
+        _inst_list_html_to_csv(in_html_path=html_path, out_csv_path=out_csv_path)

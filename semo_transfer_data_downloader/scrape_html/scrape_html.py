@@ -22,9 +22,6 @@ MAX_INST_PAGES = 41
 STARTING_INST_PAGE_NUM = 1
 
 
-SCRIPT_PARENT_DIR_PATH = Path(__file__).parent
-
-
 def _click_inst_page_num(driver, page_num):
     print(f"Clicking {page_num=}...")
 
@@ -44,7 +41,7 @@ def _goto_clickable_inst_list_page_num(driver, clickable_inst_list_page_num):
     human_click_delay()
 
 
-def scrape_html():
+def scrape_html(work_inst_list_html_downloads_dir_path: Path, work_equiv_list_html_downloads_dir_path: Path):
     """Scrape all institution list pages and all equivalency list pages of all institutions on each institution list page."""
 
     driver = setup_driver()
@@ -67,11 +64,11 @@ def scrape_html():
         wait_until_inst_page_loaded(driver, inst_page_num)
         human_click_delay()
 
-        inst_page_dest_path = cfg.WORK_INST_LIST_HTML_DOWNLOADS_DIR_PATH / f"inst_list_page_{inst_page_num}.html"
+        inst_page_dest_path = work_inst_list_html_downloads_dir_path / f"inst_list_page_{inst_page_num}.html"
         download_current_page_source(driver, inst_page_dest_path)
 
         download_all_equiv_list_pages_of_all_insts_on_current_inst_list_page(
-            driver, inst_page_dest_path, inst_page_num, cfg.WORK_EQUIV_LIST_HTML_DOWNLOADS_DIR_PATH
+            driver, inst_page_dest_path, inst_page_num, work_equiv_list_html_downloads_dir_path
         )
 
     driver.quit()
