@@ -32,8 +32,9 @@ def inst_list_html_to_csv(in_html_path: Path, out_csv_path: Path) -> None:
             city = cols[1].text.strip()
             state = cols[2].text.strip()
 
-            # Append the collected data to the rows list
-            rows.append([institution_name, city, state])
+            # Append the collected data to the rows list (if legit)
+            if not institution_name.startswith("..."):
+                rows.append([institution_name, city, state])
 
     out_csv_path.parent.mkdir(parents=True, exist_ok=True)
 
