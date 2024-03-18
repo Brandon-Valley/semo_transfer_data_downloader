@@ -6,9 +6,60 @@ from semo_transfer_data_downloader.utils import file_sys_utils
 from semo_transfer_data_downloader.utils import file_io_utils
 from semo_transfer_data_downloader.utils.file_io_utils import delete_last_n_lines_from_txt
 from semo_transfer_data_downloader.utils.html_io_utils import read_soup_from_html_file
+import csv
+from pathlib import Path
+from typing import List, Dict
 
 
-def get_out_csv_path(html_path: Path, out_dir_path: Path) -> Path:
+class _InitHtmlTableRow:
+    def __init__(self, init_html_table_row_dict: Dict[str, str]):
+        self.inst_name = list(init_html_table_row_dict.keys())[0]
+        self.init_inst_course = init_html_table_row_dict[self.inst_name]
+        self.init_semo_course = init_html_table_row_dict["SOUTHEAST MISSOURI STATE UNIVERSITY"]
+        self.init_note = init_html_table_row_dict["Note?"]
+        self.init_begin = init_html_table_row_dict["Begin"]
+        self.init_end = init_html_table_row_dict["End"]
+
+        self._parse_init_inst_course()
+        print("hi")
+
+    def _parse_init_inst_course(self) -> None:
+        """
+        Example #1:
+            Start:
+                self.init_inst_course = ASB 305 POVERTY AND GLOBAL HEALTH (3)
+            End:
+                self.inst_dept = ASB
+                self.inst_course_num = 305
+                self.inst_course_name = POVERTY AND GLOBAL HEALTH
+                self.inst_course_hours = 3
+        Example #2:
+            Start:
+                self.init_inst_course = "COM 312 COMMUNICATION, CONFLICT, AND NEGOTIATION (3)"
+            End:
+                self.inst_dept = COM
+                self.inst_course_num = 312
+                self.inst_course_name = COMMUNICATION, CONFLICT, AND NEGOTIATION
+                self.inst_course_hours = 3
+        """
+        self.inst_dept = self.init_inst_course.split(" ")[0]
+        self.inst_course_num = self.init_inst_course.split(" ")[1]
+        self.inst_course_name = " ".join(self.init_inst_course.split(" ")[2:-1])
+        self.inst_course_hours = self.init_inst_course.split(" ")[-1].strip("()")
+
+
+class _FinalRowDictFactory:
+    def __init__(self, init_html_table_row_dicts: List[Dict[str, str]]):
+        for init_html_table_row_dict in init_html_table_row_dicts:
+            _InitHtmlTableRow(init_html_table_row_dict)
+
+    #     self._parse_init_html_table_row_dicts(init_html_table_row_dicts)
+
+    # def _parse_init_html_table_row_dicts(self, init_html_table_row_dicts: List[Dict[str, str]]) -> None:
+    #     self.inst_name = init_html_table_row_dicts[0].keys()[0]
+
+
+def _get_out_csv_path(html_path: Path, out_dir_path: Path) -> Path:
     """
     Example:
     Input: inst_list_page_2__inst_gdvInstWithEQ_btnCreditFromInstName_6__equiv_list_page_1.html
@@ -18,12 +69,6 @@ def get_out_csv_path(html_path: Path, out_dir_path: Path) -> Path:
     prefix = html_file_name.split("__equiv_list_page")[0]
     csv_file_name = f"{prefix}__equiv_list.csv"
     return out_dir_path / csv_file_name
-
-
-import csv
-from pathlib import Path
-from bs4 import BeautifulSoup
-from typing import List, Dict
 
 
 def _equiv_list_html_to_init_html_table_row_dicts(in_html_path: Path) -> List[Dict[str, str]]:
@@ -48,23 +93,6 @@ def _equiv_list_html_to_init_html_table_row_dicts(in_html_path: Path) -> List[Di
     return rows[1:]
 
 
-# def write_dicts_to_csv(row_dicts: List[Dict[str, str]], out_csv_path: Path) -> None:
-#     if not row_dicts:
-#         return
-#     with open(out_csv_path, 'w', newline='', encoding='utf-8') as csvfile:
-#         writer = csv.DictWriter(csvfile, fieldnames=row_dicts[0].keys(), delimiter='\t')
-#         writer.writeheader()
-#         for row in row_dicts:
-#             writer.writerow(row)
-
-# # Example usage
-# in_html_path = Path('/mnt/data/inst_list_page_2__inst_gdvInstWithEQ_btnCreditFromInstName_6__equiv_list_page_1.html')
-# out_csv_path = Path('/mnt/data/equivalency_list.csv')
-
-# row_dicts = _equiv_list_html_to_init_html_table_row_dicts(in_html_path)
-# write_dicts_to_csv(row_dicts, out_csv_path)
-
-
 def all_equiv_list_html_to_csv(in_dir_path: Path, out_dir_path: Path) -> None:
     """
     Convert all html files in in_dir_path to csv files in out_dir_path
@@ -74,8 +102,10 @@ def all_equiv_list_html_to_csv(in_dir_path: Path, out_dir_path: Path) -> None:
     """
 
     for html_path in file_sys_utils.get_abs_path_generator_to_child_files_no_recurs(in_dir_path):
-        out_csv_path = get_out_csv_path(html_path, out_dir_path)
+        out_csv_path = _get_out_csv_path(html_path, out_dir_path)
         init_html_table_row_dicts = _equiv_list_html_to_init_html_table_row_dicts(in_html_path=html_path)
+
+        final_row_dict_factory = _FinalRowDictFactory(init_html_table_row_dicts)
 
         file_io_utils.write_csv_from_row_dicts(init_html_table_row_dicts, out_csv_path, ordered_headers=None)
         exit(out_csv_path)
