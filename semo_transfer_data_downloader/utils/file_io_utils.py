@@ -146,7 +146,9 @@ def read_csv_as_row_dicts(csv_path: Path) -> List[Dict[str, str]]:
     return list(csv.DictReader(open(csv_path, "r", newline=""), dialect="excel"))
 
 
-def write_csv_from_row_dicts(row_dicts: dict, csv_path: Path, ordered_headers: Optional[List[str]]) -> None:
+def write_csv_from_row_dicts(
+    row_dicts: List[Dict[Any, Any]], csv_path: Path, ordered_headers: Optional[List[str]]
+) -> None:
     assert isinstance(csv_path, Path), f"Expected pathlib.Path object from {csv_path=}, got {type(csv_path)=}"
 
     # Build ordered_fieldname_dict (Dicts maintain insert order - Python 3.7+)
@@ -159,8 +161,11 @@ def write_csv_from_row_dicts(row_dicts: dict, csv_path: Path, ordered_headers: O
 
     # Add all other "unordered" headers
     for row_dict in row_dicts:
-        for key, _value in row_dict.items():
+        for key in row_dict.keys():
             ordered_fieldname_dict[key] = None
+
+    # Create parent dir if needed
+    csv_path.parent.mkdir(exist_ok=True, parents=True)
 
     # Write CSV
     with open(csv_path, "w", newline="") as output_file:
