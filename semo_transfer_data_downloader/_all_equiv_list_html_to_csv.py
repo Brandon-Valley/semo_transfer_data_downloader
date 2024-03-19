@@ -30,8 +30,16 @@ def _parse_init_course_str(course_str: str) -> None:
     # print(f"Parsing {course_str=}...")
     course_dept = course_str.split(" ")[0]
     course_num = course_str.split(" ")[1]
-    course_name = " ".join(course_str.split(" ")[2:-1])
-    course_hours = course_str.split(" ")[-1].strip("()")
+
+    # If has hours
+    if "(" in course_str:
+        course_name = " ".join(course_str.split(" ")[2:-1])
+        course_hours = course_str.split(" ")[-1].strip("()")
+    else:
+        course_name = " ".join(course_str.split(" ")[2:])
+        course_hours = ""
+    # course_name = " ".join(course_str.split(" ")[2:-1])
+    # course_hours = course_str.split(" ")[-1].strip("()")
     return course_dept, course_num, course_name, course_hours
 
 
