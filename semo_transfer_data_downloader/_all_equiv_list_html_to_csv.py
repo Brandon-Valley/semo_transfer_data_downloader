@@ -12,6 +12,29 @@ from pathlib import Path
 from typing import List, Dict
 
 
+def _parse_init_course_str(course_str: str) -> None:
+    def _add_space_before_first_digit(s):
+        return re.sub(r"(\D)(\d)", r"\1 \2", s)
+
+    def _contains_alpha(s):
+        return any(c.isalpha() for c in s)
+
+    # THRA257 CREATIVE AWARENESS (2) -> THRA 257 CREATIVE AWARENESS (2)
+    if " " not in course_str:
+        og_course_str = course_str
+        print(f"No space found in {course_str=}, attempting to add space before first digit...")
+        course_str = _add_space_before_first_digit(course_str)
+        if " " not in course_str or not _contains_alpha(course_str):
+            raise NotImplementedError(f"Dont know how to deal with:{course_str=}, {og_course_str=}")
+
+    # print(f"Parsing {course_str=}...")
+    course_dept = course_str.split(" ")[0]
+    course_num = course_str.split(" ")[1]
+    course_name = " ".join(course_str.split(" ")[2:-1])
+    course_hours = course_str.split(" ")[-1].strip("()")
+    return course_dept, course_num, course_name, course_hours
+
+
 class _InitHtmlTableRow:
     def __init__(self, init_html_table_row_dict: Dict[str, str]):
         self.inst_name = list(init_html_table_row_dict.keys())[0]
@@ -51,28 +74,6 @@ class _InitHtmlTableRow:
         }
         return row_dict
 
-    def _parse_init_course_str(self, course_str: str) -> None:
-        def _add_space_before_first_digit(s):
-            return re.sub(r"(\D)(\d)", r"\1 \2", s)
-
-        def _contains_alpha(s):
-            return any(c.isalpha() for c in s)
-
-        # THRA257 CREATIVE AWARENESS (2) -> THRA 257 CREATIVE AWARENESS (2)
-        if " " not in course_str:
-            og_course_str = course_str
-            print(f"No space found in {course_str=}, attempting to add space before first digit...")
-            course_str = _add_space_before_first_digit(course_str)
-            if " " not in course_str or not _contains_alpha(course_str):
-                raise NotImplementedError(f"Dont know how to deal with:{course_str=}, {og_course_str=}")
-
-        # print(f"Parsing {course_str=}...")
-        course_dept = course_str.split(" ")[0]
-        course_num = course_str.split(" ")[1]
-        course_name = " ".join(course_str.split(" ")[2:-1])
-        course_hours = course_str.split(" ")[-1].strip("()")
-        return course_dept, course_num, course_name, course_hours
-
     def _parse_init_inst_course(self) -> None:
         """
         Example #1:
@@ -93,7 +94,7 @@ class _InitHtmlTableRow:
                 self.inst_course_hours = 3
         """
         self.inst_course_dept, self.inst_course_num, self.inst_course_name, self.inst_course_hours = (
-            self._parse_init_course_str(self.init_inst_course)
+            _parse_init_course_str(self.init_inst_course)
         )
 
     def _parse_init_semo_course(self) -> None:
@@ -150,13 +151,13 @@ class _InitHtmlTableRow:
 
         # Set for semo course 1
         self.semo_course_1_dept, self.semo_course_1_num, self.semo_course_1_name, self.semo_course_1_hours = (
-            self._parse_init_course_str(course_strs[0])
+            _parse_init_course_str(course_strs[0])
         )
 
         # Set for semo course 2
         if len(course_strs) == 2:
             self.semo_course_2_dept, self.semo_course_2_num, self.semo_course_2_name, self.semo_course_2_hours = (
-                self._parse_init_course_str(course_strs[1])
+                _parse_init_course_str(course_strs[1])
             )
         else:
             self.semo_course_2_dept = None

@@ -30,20 +30,20 @@ def _concat_csvs_in_dir(in_dir_path, out_csv_path: Path):
     write_csv_from_concatenated_csvs(csv_paths, out_csv_path)
 
 
-print("Step #1 - Scraping HTML...")
-scrape_html(WORK_INST_LIST_HTML_DOWNLOADS_DIR_PATH, WORK_EQUIV_LIST_HTML_DOWNLOADS_DIR_PATH)
+# print("Step #1 - Scraping HTML...")
+# scrape_html(WORK_INST_LIST_HTML_DOWNLOADS_DIR_PATH, WORK_EQUIV_LIST_HTML_DOWNLOADS_DIR_PATH)
 
-print("Step #2 - Converting Institution List HTMLs to CSVs...")
-all_inst_list_html_to_csv(WORK_INST_LIST_HTML_DOWNLOADS_DIR_PATH, WORK_INST_LIST_CSVS_DIR_PATH)
+# print("Step #2 - Converting Institution List HTMLs to CSVs...")
+# all_inst_list_html_to_csv(WORK_INST_LIST_HTML_DOWNLOADS_DIR_PATH, WORK_INST_LIST_CSVS_DIR_PATH)
 
-print("Step #3 - Converting Equivalency List HTMLs to CSVs...")
-all_equiv_list_html_to_csv(WORK_EQUIV_LIST_HTML_DOWNLOADS_DIR_PATH, WORK_EQUIV_LIST_CSVS_DIR_PATH)
+# print("Step #3 - Converting Equivalency List HTMLs to CSVs...")
+# all_equiv_list_html_to_csv(WORK_EQUIV_LIST_HTML_DOWNLOADS_DIR_PATH, WORK_EQUIV_LIST_CSVS_DIR_PATH)
 
-print("Step #4 - Concatenating all equivalency list csvs by inst...")
-_concat_csvs_in_dir(WORK_EQUIV_LIST_CSVS_DIR_PATH, WORK_CONCATENATED_EQUIV_LIST_CSV_PATH)
+# print("Step #4 - Concatenating all equivalency list csvs by inst...")
+# _concat_csvs_in_dir(WORK_EQUIV_LIST_CSVS_DIR_PATH, WORK_CONCATENATED_EQUIV_LIST_CSV_PATH)
 
-print("Step #5 - Concatenating all inst list csvs...")
-_concat_csvs_in_dir(WORK_INST_LIST_CSVS_DIR_PATH, WORK_CONCATENATED_INST_LIST_CSV_PATH)
+# print("Step #5 - Concatenating all inst list csvs...")
+# _concat_csvs_in_dir(WORK_INST_LIST_CSVS_DIR_PATH, WORK_CONCATENATED_INST_LIST_CSV_PATH)
 
 print("Step #6 - Joining institutions and equivalencies...")
 # Full inner and outer join of the equiv_table and inst_table by using the institution_name
