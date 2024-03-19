@@ -10,6 +10,25 @@ from tabulate import tabulate
 
 
 class EasyCsvDb:
+    '''
+    ## Simple Usage Example:
+
+    ```python
+    db = EasyCsvDb()
+    db.create_table_from_csv(CSV_A_PATH, "a_table")
+    db.create_table_from_csv(CSV_B_PATH, "b_table")
+    db.display_tables()
+    df = db.query(
+        """
+        SELECT * FROM b_table
+        JOIN equiv_table
+        ON b_table.common_field = a_table.common_field
+    """
+    )
+    df.to_csv(CSV_C_PATH, index=False)
+    ```
+    '''
+
     def __init__(self):
         self.csv_path_by_table_name: Dict[str, Path] = {}
 
