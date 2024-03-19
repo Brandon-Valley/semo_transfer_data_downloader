@@ -143,7 +143,7 @@ def read_csv_as_row_dicts(csv_path: Path) -> List[Dict[str, str]]:
     """
     assert isinstance(csv_path, Path), f"Expected pathlib.Path object from {csv_path=}, got {type(csv_path)=}"
     assert csv_path.is_file(), csv_path
-    return list(csv.DictReader(open(csv_path, "r", newline=""), dialect="excel"))
+    return list(csv.DictReader(open(csv_path, encoding="utf-8", newline=""), dialect="excel"))
 
 
 def write_csv_from_row_dicts(
@@ -168,7 +168,45 @@ def write_csv_from_row_dicts(
     csv_path.parent.mkdir(exist_ok=True, parents=True)
 
     # Write CSV
-    with open(csv_path, "w", newline="") as output_file:
+    with open(csv_path, "w", encoding="utf-8", newline="") as output_file:
         dict_writer = csv.DictWriter(output_file, fieldnames=ordered_fieldname_dict.keys())
         dict_writer.writeheader()
         dict_writer.writerows(row_dicts)
+
+
+# def write_csv_from_concatenated_csvs(csv_paths: List[Path], out_csv_path: Path) -> None:
+#     """
+#     Write a new .csv file to `out_csv_path` that is the concatenation of all the .csv files in `csv_paths`
+#     """
+#     out_csv_path.parent.mkdir(exist_ok=True, parents=True)
+
+#     with open(out_csv_path, "w", encoding="utf-8", newline="") as out_csv:
+#         for csv_path in csv_paths:
+#             with open(csv_path, "r", encoding="utf-8", newline="") as in_csv:
+#                 out_csv.write(in_csv.read())  # Write the entire file to the output file
+
+
+def write_csv_from_concatenated_csvs(csv_paths: List[Path], out_csv_path: Path):
+    """
+    Write a new .csv file to `out_csv_path` that is the concatenation of all the .csv files in `csv_paths`.
+    Include the header from only the first .csv file.
+    """
+    out_csv_path.parent.mkdir(exist_ok=True, parents=True)
+
+    # Track whether the first file is being processed
+    is_first_file = True
+
+    with open(out_csv_path, "w", encoding="utf-8", newline="") as out_csv:
+        for csv_path in csv_paths:
+            with open(csv_path, "r", encoding="utf-8", newline="") as in_csv:
+                # Read the file's lines
+                lines = in_csv.readlines()
+
+                # If it's the first file, write all lines (including the header)
+                if is_first_file:
+                    out_csv.writelines(lines)
+                    # Subsequent files will no longer be considered the first
+                    is_first_file = False
+                else:
+                    # For subsequent files, skip the first line (header) and write the rest
+                    out_csv.writelines(lines[1:])

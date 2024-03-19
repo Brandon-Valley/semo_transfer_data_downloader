@@ -69,4 +69,5 @@ def all_inst_list_html_to_csv(in_dir_path: Path, out_dir_path: Path) -> None:
     for html_path in file_sys_utils.get_abs_path_generator_to_child_files_no_recurs(in_dir_path):
         html_file_name = html_path.name
         out_csv_path = out_dir_path / f"{html_file_name}.csv"
+        print(f"Converting {html_path} to {out_csv_path}...")
         _inst_list_html_to_csv(in_html_path=html_path, out_csv_path=out_csv_path)
