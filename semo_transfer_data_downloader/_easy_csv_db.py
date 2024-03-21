@@ -85,8 +85,6 @@ class EasyCsvDb:
 
         # Read CSV files into pandas DataFrames
         data_frame: DataFrame = pd.read_csv(csv_path, low_memory=low_memory)
-        # print(data_frame.head())
-        # exit(data_frame.head())
 
         # Store DataFrames in the database
         data_frame.to_sql(table_name, self.sqlite_connection, index=index)
@@ -94,7 +92,10 @@ class EasyCsvDb:
         self.csv_path_by_table_name[table_name] = csv_path
 
     def to_json(self) -> dict:
-        return self.csv_path_by_table_name
+        json_serializable_csv_path_by_table_name = {
+            table_name: csv_path.as_posix() for table_name, csv_path in self.csv_path_by_table_name.items()
+        }
+        return json_serializable_csv_path_by_table_name
 
     def __repr__(self) -> str:
         return json.dumps(self.to_json())
