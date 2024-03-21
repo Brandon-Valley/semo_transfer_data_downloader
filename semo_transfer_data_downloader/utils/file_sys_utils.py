@@ -44,7 +44,14 @@ def delete_if_exists(path_or_path_iter: Union[PATH_TYPES, Iterable[PATH_TYPES]])
             if isfile(in_path) or islink(in_path):
                 os.remove(in_path)
             elif isdir(in_path):
-                shutil.rmtree(in_path, ignore_errors=False, onerror=_onerror)  # type: ignore [arg-type]
+                try:
+                    shutil.rmtree(in_path, ignore_errors=False, onerror=_onerror)  # type: ignore [arg-type]
+                except TypeError as e:
+                    raise Exception(
+                        f"Got TypeError when trying to delete {in_path}, probably means this dir contains a file that "
+                        "is open in a program that is not allowing deletion (like a .csv open in Excel) - Close the "
+                        "program and re-run"
+                    ) from e
             else:
                 raise ValueError(f"Unknown object: {path=} - {type(path)=}")
 

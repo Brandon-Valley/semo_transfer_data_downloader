@@ -19,13 +19,22 @@ def _parse_init_course_str(course_str: str) -> None:
     def _contains_alpha(s):
         return any(c.isalpha() for c in s)
 
-    # THRA257 CREATIVE AWARENESS (2) -> THRA 257 CREATIVE AWARENESS (2)
+    def _contains_alpha_and_digit(s):
+        return any(c.isalpha() or c.isdigit() for c in s)
+
     if " " not in course_str:
         og_course_str = course_str
         print(f"No space found in {course_str=}, attempting to add space before first digit...")
         course_str = _add_space_before_first_digit(course_str)
         if " " not in course_str or not _contains_alpha(course_str):
             raise NotImplementedError(f"Dont know how to deal with:{course_str=}, {og_course_str=}")
+
+    # THRA257 CREATIVE AWARENESS (2) -> THRA 257 CREATIVE AWARENESS (2)
+    lead_str = course_str.split(" ")[0]
+    without_lead_str = course_str[len(lead_str) :]
+    if _contains_alpha_and_digit(lead_str):
+        new_lead_str = _add_space_before_first_digit(lead_str)
+        course_str = new_lead_str + without_lead_str
 
     # print(f"Parsing {course_str=}...")
     course_dept = course_str.split(" ")[0]
@@ -237,12 +246,14 @@ def all_equiv_list_html_to_csv(in_dir_path: Path, out_dir_path: Path) -> None:
         row_dicts = []
         for init_html_table_row_dict in init_html_table_row_dicts:
             row_dict = _InitHtmlTableRow(init_html_table_row_dict).get_row_dict()
+            if row_dict["semo_course_1_name"] == "DOES NOT TRANSFER":
+                continue
             row_dicts.append(row_dict)
 
-        # # Create new or append to existing csv
-        # if out_csv_path.exists():
-        #     existing_row_dicts = file_io_utils.read_csv_as_row_dicts(out_csv_path)
-        #     row_dicts = existing_row_dicts + row_dicts
-        # else:
-        #     file_io_utils.write_csv_from_row_dicts(row_dicts, out_csv_path, ordered_headers=None)
-        file_io_utils.write_csv_from_row_dicts(row_dicts, out_csv_path, ordered_headers=None)
+        # Create new or append to existing csv
+        if out_csv_path.exists():
+            existing_row_dicts = file_io_utils.read_csv_as_row_dicts(out_csv_path)
+            row_dicts = existing_row_dicts + row_dicts
+        else:
+            file_io_utils.write_csv_from_row_dicts(row_dicts, out_csv_path, ordered_headers=None)
+        # file_io_utils.write_csv_from_row_dicts(row_dicts, out_csv_path, ordered_headers=None)
