@@ -1,7 +1,3 @@
-"""
-This file exists to implement one or more non-repository-specific general "utility" functions.
-"""
-
 import csv
 import json
 from pathlib import Path
@@ -150,6 +146,7 @@ def write_csv_from_row_dicts(
     row_dicts: List[Dict[Any, Any]], csv_path: Path, ordered_headers: Optional[List[str]] = None
 ) -> None:
     assert isinstance(csv_path, Path), f"Expected pathlib.Path object from {csv_path=}, got {type(csv_path)=}"
+    assert isinstance(row_dicts, list), f"Expected list object from {row_dicts=}, got {type(row_dicts)=}"
 
     # Build ordered_fieldname_dict (Dicts maintain insert order - Python 3.7+)
     ordered_fieldname_dict: dict = {}
@@ -172,18 +169,6 @@ def write_csv_from_row_dicts(
         dict_writer = csv.DictWriter(output_file, fieldnames=ordered_fieldname_dict.keys())
         dict_writer.writeheader()
         dict_writer.writerows(row_dicts)
-
-
-# def write_csv_from_concatenated_csvs(csv_paths: List[Path], out_csv_path: Path) -> None:
-#     """
-#     Write a new .csv file to `out_csv_path` that is the concatenation of all the .csv files in `csv_paths`
-#     """
-#     out_csv_path.parent.mkdir(exist_ok=True, parents=True)
-
-#     with open(out_csv_path, "w", encoding="utf-8", newline="") as out_csv:
-#         for csv_path in csv_paths:
-#             with open(csv_path, "r", encoding="utf-8", newline="") as in_csv:
-#                 out_csv.write(in_csv.read())  # Write the entire file to the output file
 
 
 def write_csv_from_concatenated_csvs(csv_paths: List[Path], out_csv_path: Path):
