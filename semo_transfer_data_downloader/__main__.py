@@ -5,7 +5,11 @@ from semo_transfer_data_downloader._easy_csv_db import EasyCsvDb
 from semo_transfer_data_downloader._all_inst_list_html_to_csv import all_inst_list_html_to_csv
 from semo_transfer_data_downloader._all_equiv_list_html_to_csv import all_equiv_list_html_to_csv
 from semo_transfer_data_downloader.utils import file_sys_utils
-from semo_transfer_data_downloader.utils.file_io_utils import write_csv_from_concatenated_csvs
+from semo_transfer_data_downloader.utils.file_io_utils import (
+    read_csv_as_row_dicts,
+    write_csv_from_concatenated_csvs,
+    write_csv_from_row_dicts,
+)
 from .scrape_html.scrape_html import scrape_html
 
 
@@ -21,7 +25,8 @@ WORK_EQUIV_LIST_CSVS_DIR_PATH = WORK_HTML_DOWNLOADS_DIR_PATH / "equivalency_list
 WORK_BIG_BOYS_DIR_PATH = WORK_HTML_DOWNLOADS_DIR_PATH / "big_boys"
 WORK_CONCATENATED_EQUIV_LIST_CSV_PATH = WORK_BIG_BOYS_DIR_PATH / "concatenated_equivalency_list.csv"
 WORK_CONCATENATED_INST_LIST_CSV_PATH = WORK_BIG_BOYS_DIR_PATH / "concatenated_institution_list.csv"
-OUT_FULL_TRANSFERS_CSV_PATH = OUT_DIR_PATH / "semo_transfer_course_equivalencies.csv"
+OUT_TRANSFERS_FULL_CSV_PATH = OUT_DIR_PATH / "semo_transfer_course_equivalencies_full.csv"
+OUT_TRANSFERS_NO_ELECTIVE_CSV_PATH = OUT_DIR_PATH / "semo_transfer_course_equivalencies_no_electives.csv"
 
 
 def _concat_csvs_in_dir(in_dir_path, out_csv_path: Path):
@@ -58,7 +63,12 @@ df = db.query(
     ON inst_table.institution_name = equiv_table.institution_name
 """
 )
-print(f"Writing {OUT_FULL_TRANSFERS_CSV_PATH=}...")
-df.to_csv(OUT_FULL_TRANSFERS_CSV_PATH, index=False)
+print(f"Writing {OUT_TRANSFERS_FULL_CSV_PATH=}...")
+df.to_csv(OUT_TRANSFERS_FULL_CSV_PATH, index=False)
 
-# db.display_tables()
+print("Step #7 - Creating No-Elective version...")
+full_row_dicts = read_csv_as_row_dicts(OUT_TRANSFERS_FULL_CSV_PATH)
+no_elective_row_dicts = [row_dict for row_dict in full_row_dicts if "ELECTIVE" not in row_dict["semo_course_1_name"]]
+print(f"Writing {OUT_TRANSFERS_NO_ELECTIVE_CSV_PATH=}...")
+write_csv_from_row_dicts(no_elective_row_dicts, OUT_TRANSFERS_NO_ELECTIVE_CSV_PATH)
+

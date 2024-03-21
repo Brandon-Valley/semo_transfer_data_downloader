@@ -147,7 +147,7 @@ def read_csv_as_row_dicts(csv_path: Path) -> List[Dict[str, str]]:
 
 
 def write_csv_from_row_dicts(
-    row_dicts: List[Dict[Any, Any]], csv_path: Path, ordered_headers: Optional[List[str]]
+    row_dicts: List[Dict[Any, Any]], csv_path: Path, ordered_headers: Optional[List[str]] = None
 ) -> None:
     assert isinstance(csv_path, Path), f"Expected pathlib.Path object from {csv_path=}, got {type(csv_path)=}"
 
