@@ -7,4 +7,8 @@ https://tes.collegesource.com/publicview/TES_publicview01.aspx?rid=1f7d5d36-c901
 
 ---
 
-Run from root directory of this repository: `python -m semo_transfer_data_downloader`
+Run from root directory of this repository:
+
+```
+python -m semo_transfer_data_downloader
+```
